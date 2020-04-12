@@ -1,7 +1,6 @@
 package me.tucu.users;
 
 import me.tucu.results.MapResult;
-import me.tucu.results.StringResult;
 import me.tucu.schema.Labels;
 import me.tucu.schema.RelationshipTypes;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Stream;

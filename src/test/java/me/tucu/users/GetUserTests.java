@@ -31,7 +31,6 @@ public class GetUserTests {
     @Test
     void shouldGetUser()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -51,7 +50,6 @@ public class GetUserTests {
     @Test
     void shouldNotGetUserNotFound()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {

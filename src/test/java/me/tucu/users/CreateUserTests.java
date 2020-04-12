@@ -35,7 +35,6 @@ public class CreateUserTests {
     @Test
     void shouldCreateUser()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -58,7 +57,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserInvalidInput()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -78,7 +76,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserMissingUsername()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -98,7 +95,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserEmptyUsername()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -118,7 +114,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserInvalidUsername()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -138,7 +133,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserMissingEmail()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -158,7 +152,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserEmptyEmail()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -178,7 +171,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserInvalidEmail()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -198,7 +190,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserMissingName()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -218,7 +209,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserEmptyName()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -238,7 +228,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserInvalidName()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -258,7 +247,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserMissingPassword()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -278,7 +266,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserEmptyPassword()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -298,7 +285,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserInvalidPassword()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -318,7 +304,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserExistingUsername()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -338,7 +323,6 @@ public class CreateUserTests {
     @Test
     void shouldNotCreateUserExistingEmail()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
