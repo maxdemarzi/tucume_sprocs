@@ -19,8 +19,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.abs;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.reverseOrder;
-import static me.tucu.follows.FollowExceptions.ALREADY_FOLLOW;
-import static me.tucu.follows.FollowExceptions.SELF_FOLLOW;
+import static me.tucu.follows.FollowExceptions.*;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
 import static me.tucu.users.Users.getUserAttributes;
@@ -130,16 +129,80 @@ public class Follows {
                 return Stream.of(USER_NOT_FOUND);
             }
 
+            // Check to see if they are already followed from the node with the least FOLLOWS relationships
             HashSet<Node> followed = new HashSet<>();
-            for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS)) {
-                followed.add(r1.getEndNode());
+            if (user.getDegree(RelationshipTypes.FOLLOWS, Direction.OUTGOING)
+                    < user2.getDegree(RelationshipTypes.FOLLOWS, Direction.INCOMING)) {
+                for (Relationship r1: user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS) ) {
+                    followed.add(r1.getEndNode());
+                }
+            } else {
+                for (Relationship r1 : user2.getRelationships(Direction.INCOMING, RelationshipTypes.FOLLOWS)) {
+                    followed.add(r1.getStartNode());
+                }
             }
+
             if(followed.contains(user2)) {
                 return Stream.of(ALREADY_FOLLOW);
             }
 
             Relationship follows = user.createRelationshipTo(user2, RelationshipTypes.FOLLOWS);
             follows.setProperty(TIME, ZonedDateTime.now());
+            results = user2.getAllProperties();
+            results.remove(EMAIL);
+            results.remove(PASSWORD);
+            results.remove(SILVER);
+            results.remove(GOLD);
+            tx.commit();
+        }
+        return Stream.of(new MapResult(results));
+    }
+
+    @Procedure(name = "me.tucu.follows.remove", mode = Mode.WRITE)
+    @Description("CALL me.tucu.follows.remove(username, username2)")
+    public Stream<MapResult> removeFollows(@Name(value = "username", defaultValue = "") String username,
+                                           @Name(value = "username2", defaultValue = "") String username2) {
+        // Can't unfollow yourself
+        if (username.equals(username2)) {
+            return Stream.of(SELF_UNFOLLOW);
+        }
+
+        Map<String, Object> results;
+        try (Transaction tx = db.beginTx()) {
+            Node user = tx.findNode(Labels.User, USERNAME, username);
+            if (user == null) {
+                return Stream.of(USER_NOT_FOUND);
+            }
+            Node user2 = tx.findNode(Labels.User, USERNAME, username2);
+            if (user2 == null) {
+                return Stream.of(USER_NOT_FOUND);
+            }
+
+            // Check to see if user is really following from the node with the least FOLLOWS relationships
+            Relationship follows = null;
+            if (user.getDegree(RelationshipTypes.FOLLOWS, Direction.OUTGOING)
+                    < user2.getDegree(RelationshipTypes.FOLLOWS, Direction.INCOMING)) {
+                for (Relationship r1: user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS) ) {
+                    if (r1.getEndNode().equals(user2)) {
+                        follows = r1;
+                        break;
+                    }
+                }
+            } else {
+                for (Relationship r1 : user2.getRelationships(Direction.INCOMING, RelationshipTypes.FOLLOWS)) {
+                    if (r1.getStartNode().equals(user)) {
+                        follows = r1;
+                        break;
+                    }
+                }
+            }
+
+            if (follows == null) {
+                return Stream.of(NOT_FOLLOWING);
+            }
+
+            follows.delete();
+
             results = user2.getAllProperties();
             results.remove(EMAIL);
             results.remove(PASSWORD);
