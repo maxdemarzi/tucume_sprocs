@@ -2,7 +2,6 @@ package me.tucu.users;
 
 import me.tucu.Exceptions;
 import me.tucu.schema.Schema;
-import org.apache.commons.collections.map.UnmodifiableMap;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.*;
@@ -14,6 +13,7 @@ import java.util.Map;
 
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
 
@@ -51,7 +51,7 @@ public class CreateUserTests {
             Map actual = result.single().get("value").asMap();
             HashMap<String, Object> modifiable = new HashMap<String, Object>(actual);
             modifiable.remove(TIME);
-            assertThat(modifiable, equalTo(EXPECTED));
+            assertThat(modifiable, is(EXPECTED));
         }
     }
 
@@ -359,7 +359,9 @@ public class CreateUserTests {
             "CREATE (max:User {username:'jexp', " +
                     "email: 'michael@neo4j.com', " +
                     "name: 'Michael Hunger'," +
-                    "password: 'tunafish'})";
+                    "password: 'tunafish'," +
+                    "silver: 299," +
+                    "gold:0})";
 
     private static final HashMap INPUT = new HashMap<String, Object>() {{
         put("username", "maxdemarzi");
@@ -453,5 +455,7 @@ public class CreateUserTests {
         put("name", "Max De Marzi");
         put("password", "swordfish");
         put("hash","58750f2179edbd650b471280aa66fee5");
+        put("silver", 299L);
+        put("gold", 0L);
     }};
 }

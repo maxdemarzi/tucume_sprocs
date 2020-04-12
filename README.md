@@ -22,3 +22,4 @@ Stored Procedures:
 
     CALL me.tucu.users.get($username);
     CALL me.tucu.users.create($parameters);
+    CALL me.tucu.users.profile($username, $username2);

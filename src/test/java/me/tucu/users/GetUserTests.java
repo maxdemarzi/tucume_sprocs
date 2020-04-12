@@ -73,6 +73,8 @@ public class GetUserTests {
         put("email", "maxdemarzi@hotmail.com");
         put("name", "Max De Marzi");
         put("password", "swordfish");
+        put("silver", 299L);
+        put("gold", 0L);
     }};
 
 
@@ -80,5 +82,7 @@ public class GetUserTests {
             "CREATE (max:User {username:'maxdemarzi', " +
                     "email: 'maxdemarzi@hotmail.com', " +
                     "name: 'Max De Marzi'," +
-                    "password: 'swordfish'})";
+                    "password: 'swordfish'," +
+                    "silver:299," +
+                    "gold:0})";
 }
