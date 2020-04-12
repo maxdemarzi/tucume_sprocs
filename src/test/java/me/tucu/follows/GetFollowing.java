@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
 
-public class getFollowers {
+public class GetFollowing {
 
     private static Neo4j neo4j;
 
@@ -35,7 +35,7 @@ public class getFollowers {
     }
 
     @Test
-    void shouldGetFollowers()
+    void shouldGetFollowing()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -45,7 +45,7 @@ public class getFollowers {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.followers($username);",
+            Result result = session.run( "CALL me.tucu.follows.following($username);",
                     parameters("username", "maxdemarzi"));
 
             // Then I should get what I expect
@@ -62,7 +62,7 @@ public class getFollowers {
     }
 
     @Test
-    void shouldGetFollowersLimited()
+    void shouldGetFollowingLimited()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -72,7 +72,7 @@ public class getFollowers {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.followers($username, $limit);",
+            Result result = session.run( "CALL me.tucu.follows.following($username, $limit);",
                     parameters("username", "maxdemarzi", "limit", 1));
 
             // Then I should get what I expect
@@ -89,7 +89,7 @@ public class getFollowers {
     }
 
     @Test
-    void shouldGetFollowersSince()
+    void shouldGetFollowingSince()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -99,7 +99,7 @@ public class getFollowers {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.followers($username, $limit, $since);",
+            Result result = session.run( "CALL me.tucu.follows.following($username, $limit, $since);",
                     parameters("username", "maxdemarzi", "limit", 25, "since", ZonedDateTime.now().toEpochSecond() - 86400));
 
             // Then I should get what I expect
@@ -116,7 +116,7 @@ public class getFollowers {
     }
 
     @Test
-    void shouldNotGetFollowersNotFound()
+    void shouldNotGetFollowingNotFound()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -126,7 +126,7 @@ public class getFollowers {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.followers($username);",
+            Result result = session.run( "CALL me.tucu.follows.following($username);",
                     parameters("username", "not_there"));
 
             // Then I should get what I expect
@@ -150,16 +150,16 @@ public class getFollowers {
                     "name: 'Luke Gannon'," +
                     "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'cuddlefish'})" +
-                    "CREATE (max)<-[:FOLLOWS {time:datetime() - duration('P7D') }]-(jexp)" +
-                    "CREATE (max)<-[:FOLLOWS {time:datetime()  }]-(laeg)";
+                    "CREATE (max)-[:FOLLOWS {time:datetime() - duration('P7D') }]->(jexp)" +
+                    "CREATE (max)-[:FOLLOWS {time:datetime()  }]->(laeg)";
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
             put("username", "laexample");
             put("name", "Luke Gannon");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("followers", 0L);
-            put("following", 1L);
+            put("followers", 1L);
+            put("following", 0L);
             put("posts", 0L);
             put("likes", 0L);
         }});
@@ -167,8 +167,8 @@ public class getFollowers {
             put("username", "jexp");
             put("name", "Michael Hunger");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("followers", 0L);
-            put("following", 1L);
+            put("followers", 1L);
+            put("following", 0L);
             put("posts", 0L);
             put("likes", 0L);
         }});

@@ -24,7 +24,4 @@ public class UserExceptions {
     public static final MapResult INVALID_PASSWORD = new MapResult(Map.of("Error", "Invalid password Parameter."));
 
     public static final MapResult USER_NOT_FOUND = new MapResult(Map.of("Error", "User not Found."));
-    public static final MapResult BLOCKED_USER = new MapResult(Map.of("Error", "Cannot follow blocked User."));
-    public static final MapResult SELF_FOLLOW = new MapResult(Map.of("Error", "Cannot follow self."));
-
 }
