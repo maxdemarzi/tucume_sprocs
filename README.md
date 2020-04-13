@@ -23,6 +23,13 @@ Stored Procedures:
     CALL me.tucu.users.get($username);
     CALL me.tucu.users.create($parameters);
     CALL me.tucu.users.profile($username, $username2);
-    CALL me.tucu.follows.followers($username, $limit, $since)
-    CALL me.tucu.follows.following($username, $limit, $since)
+    
+    CALL me.tucu.follows.followers($username, $limit, $since);
+    CALL me.tucu.follows.following($username, $limit, $since);
     CALL me.tucu.follows.create($username, $username2);
+    CALL me.tucu.follows.remove($username, $username2);
+    
+    CALL me.tucu.mutes.get($username, $limit, $since);
+    CALL me.tucu.mutes.create($username, $username2);
+    CALL me.tucu.mutes.remove($username, $username2);
+    
