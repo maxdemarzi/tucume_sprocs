@@ -26,7 +26,6 @@ public class SchemaTests {
     @Test
     void shouldCreateSchema()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -38,7 +37,7 @@ public class SchemaTests {
             Result result = session.run( "CALL me.tucu.schema.create();");
 
             // Then I should get what I expect
-            assertThat(result.list().size(), equalTo(3));
+            assertThat(result.list().size(), equalTo(4));
         }
     }
 }

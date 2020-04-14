@@ -6,5 +6,7 @@ public enum RelationshipTypes implements RelationshipType {
     FOLLOWS,
     MUTES,
     LIKES,
-    REPLIED_TO
+    PROMOTES,
+    REPLIED_TO,
+    REPOSTED
 }

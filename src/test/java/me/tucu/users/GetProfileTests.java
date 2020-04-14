@@ -32,7 +32,6 @@ public class GetProfileTests {
     @Test
     void shouldProfileUser()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {
@@ -52,7 +51,6 @@ public class GetProfileTests {
     @Test
     void shouldGetProfileSecondUser()
     {
-        neo4j.defaultDatabaseService();
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
         {

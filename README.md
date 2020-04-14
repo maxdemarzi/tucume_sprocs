@@ -33,3 +33,10 @@ Stored Procedures:
     CALL me.tucu.mutes.create($username, $username2);
     CALL me.tucu.mutes.remove($username, $username2);
     
+    CALL me.tucu.likes.get($username, $limit, $since, $username2);
+
+Notes
+------
+     
+There are two types of "Post" nodes. Those that promote a "Product" and those that do not. 
+The regular posts have direct REPOST relationships, the promoting posts build a tree.        

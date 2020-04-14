@@ -12,8 +12,7 @@ import org.neo4j.procedure.Procedure;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static me.tucu.schema.Properties.NAME;
-import static me.tucu.schema.Properties.USERNAME;
+import static me.tucu.schema.Properties.*;
 
 public class Schema {
 
@@ -32,6 +31,15 @@ public class Schema {
     public Stream<StringResult> create() {
         ArrayList<String> results = new ArrayList<>();
 
+        // We have a need to quickly find out if a user Re-advertises an Advertisement
+        try (Transaction tx = db.beginTx()) {
+            org.neo4j.graphdb.schema.Schema schema = tx.schema();
+            if (!schema.getIndexes(Labels.Post).iterator().hasNext()) {
+                schema.indexFor(Labels.Post).on(USERNAME).on(POST_ID).create();
+                tx.commit();
+                results.add("(:Post {username, post_id}) index created");
+            }
+        }
         try (Transaction tx = db.beginTx()) {
             org.neo4j.graphdb.schema.Schema schema = tx.schema();
             if (!schema.getConstraints(Labels.Product).iterator().hasNext()) {
