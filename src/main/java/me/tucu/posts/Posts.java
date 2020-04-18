@@ -96,5 +96,11 @@ public class Posts {
         return count;
     }
 
+    public static Node getOriginalPost(Node post) {
+        while(post.hasRelationship(Direction.OUTGOING, RelationshipTypes.REPOSTED)) {
+            post = post.getSingleRelationship(RelationshipTypes.REPOSTED, Direction.OUTGOING).getEndNode();
+        }
+        return post;
+    }
 
 }

@@ -3,6 +3,7 @@ package me.tucu.likes;
 import me.tucu.results.MapResult;
 import me.tucu.schema.Labels;
 import me.tucu.schema.RelationshipTypes;
+import org.neo4j.exceptions.EntityNotFoundException;
 import org.neo4j.graphdb.*;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.*;
@@ -18,6 +19,9 @@ import java.util.stream.Stream;
 import static java.lang.Math.abs;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.reverseOrder;
+import static me.tucu.likes.LikesExceptions.ALREADY_LIKES;
+import static me.tucu.likes.LikesExceptions.INSUFFICIENT_FUNDS;
+import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.Posts.*;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
@@ -76,7 +80,7 @@ public class Likes {
                     properties.put(USERNAME, author.getProperty(USERNAME));
                     properties.put(NAME, author.getProperty(NAME));
                     properties.put(HASH, author.getProperty(HASH));
-                    properties.put(LIKES, post.getDegree(RelationshipTypes.LIKES));
+                    properties.put(LIKES, (long)post.getDegree(RelationshipTypes.LIKES));
                     properties.put(REPOSTS, getRepostedCount(post));
                     if (user2 != null) {
                         properties.put(LIKED, userLikesPost(user2, post));
@@ -91,6 +95,83 @@ public class Likes {
         results.sort(Comparator.comparing(m -> (ZonedDateTime) m.get(TIME), reverseOrder()));
         return results.stream().limit(limit).map(MapResult::new);
     }
+
+    @Procedure(name = "me.tucu.likes.create", mode = Mode.WRITE)
+    @Description("CALL me.tucu.likes.create(username, post_id)")
+    public Stream<MapResult> createLikes(@Name(value = "username", defaultValue = "") String username,
+                                        @Name(value = "post_id", defaultValue = "-1") Long post_id) {
+        Map<String, Object> results;
+        try (Transaction tx = db.beginTx()) {
+            Node user = tx.findNode(Labels.User, USERNAME, username);
+            if (user == null) {
+                return Stream.of(USER_NOT_FOUND);
+            }
+            Node post;
+            try {
+                post = tx.getNodeById(post_id);
+            } catch (Exception exception) {
+                return Stream.of(POST_NOT_FOUND);
+            }
+
+            if (!post.hasLabel(Labels.Post)) {
+                return Stream.of(POST_NOT_FOUND);
+            }
+
+            // Get the first Reposted Post if the post being liked is a Promoting Post.
+            post = getOriginalPost(post);
+            if (userLikesPost(user, post)) {
+                return Stream.of(ALREADY_LIKES);
+            }
+
+            // We are preparing the like relationship and the results before we
+            // find out if the user has the funds needed to perform the action
+            // we do this to minimize the time the nodes are locked.
+            results = post.getAllProperties();
+            Relationship like = user.createRelationshipTo(post, RelationshipTypes.LIKES);
+            like.setProperty(TIME, ZonedDateTime.now());
+            results.put(LIKED_TIME, ZonedDateTime.now());
+
+            Node author = getAuthor(post);
+            results.put(USERNAME, author.getProperty(USERNAME));
+            results.put(NAME, author.getProperty(NAME));
+            results.put(HASH, author.getProperty(HASH));
+            results.put(LIKES, (long)post.getDegree(RelationshipTypes.LIKES));
+            results.put(REPOSTS, getRepostedCount(post));
+            results.put(LIKED, true);
+            results.put(REPOSTED, userRepostedPost(tx, user, post));
+
+            // Lock the users so nobody else can touch them,
+            // the lock will be release at the end of the transaction
+            tx.acquireWriteLock(user);
+            tx.acquireWriteLock(author);
+
+            Long silver = (Long)user.getProperty(SILVER);
+            Long gold = (Long)user.getProperty(GOLD);
+
+            // User must have a positive balance of gold and silver
+            if (gold + silver < 1) {
+                return Stream.of(INSUFFICIENT_FUNDS);
+            }
+
+            if (silver > 0) {
+                like.setProperty(SILVER, true);
+                silver = silver - 1;
+                user.setProperty(SILVER, silver);
+                author.setProperty(SILVER, (Long)author.getProperty(SILVER) + 1);
+                results.put(SILVER, true);
+            } else {
+                like.setProperty(GOLD, true);
+                gold = gold - 1;
+                user.setProperty(GOLD, gold);
+                author.setProperty(GOLD, (Long)author.getProperty(GOLD) + 1);
+                results.put(GOLD, true);
+            }
+            tx.commit();
+        }
+
+        return Stream.of(new MapResult(results));
+    }
+
 
     public static boolean userLikesPost(Node user, Node post) {
         boolean alreadyLiked = false;
