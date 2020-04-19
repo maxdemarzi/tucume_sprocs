@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
 
-public class CreateFollows {
+public class CreateFollowsTests {
 
     private static Neo4j neo4j;
 

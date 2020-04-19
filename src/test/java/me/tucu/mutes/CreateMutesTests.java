@@ -1,4 +1,4 @@
-package me.tucu.follows;
+package me.tucu.mutes;
 
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.follows.FollowExceptions.NOT_FOLLOWING;
+import static me.tucu.mutes.MuteExceptions.ALREADY_MUTED;
+import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
 
-public class RemoveFollows {
+public class CreateMutesTests {
 
     private static Neo4j neo4j;
 
@@ -27,13 +29,13 @@ public class RemoveFollows {
                 // disabling http server to speed up start
                 .withDisabledServer()
                 .withProcedure(Schema.class)
-                .withProcedure(Follows.class)
+                .withProcedure(Mutes.class)
                 .withFixture(FIXTURE)
                 .build();
     }
 
     @Test
-    void shouldRemoveFollows()
+    void shouldCreateMutes()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -43,34 +45,24 @@ public class RemoveFollows {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.remove($username, $username2);",
-                    parameters("username", "jexp","username2", "maxdemarzi"));
-
-            // Then I should get what I expect
-            assertThat(result.single().get("value").asMap(), equalTo(EXPECTED.get(2)));
-        }
-    }
-
-    @Test
-    void shouldNotRemoveFollowsNotFollowing()
-    {
-        // In a try-block, to make sure we close the driver after the test
-        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
-        {
-            // Given I've started Neo4j with the procedure
-            //       which my 'neo4j' rule above does.
-            Session session = driver.session();
-
-            // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.remove($username, $username2);",
+            Result result = session.run( "CALL me.tucu.mutes.create($username, $username2);",
                     parameters("username", "maxdemarzi","username2", "jexp"));
 
             // Then I should get what I expect
-            assertThat(result.single().get("value").asMap(), equalTo(NOT_FOLLOWING.value));
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.get(0), is(EXPECTED.get(1)));
         }
     }
+
     @Test
-    void shouldNotRemoveFollowsNotFound()
+    void shouldNotCreateMutesAlreadyMutes()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -80,7 +72,25 @@ public class RemoveFollows {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.remove($username, $username2);",
+            Result result = session.run( "CALL me.tucu.mutes.create($username, $username2);",
+                    parameters("username", "jexp","username2", "maxdemarzi"));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(ALREADY_MUTED.value));
+        }
+    }
+    @Test
+    void shouldNotCreateMutesNotFound()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.mutes.create($username, $username2);",
                     parameters("username", "not_there","username2", "jexp"));
 
             // Then I should get what I expect
@@ -89,7 +99,7 @@ public class RemoveFollows {
     }
 
     @Test
-    void shouldNotRemoveFollowsNotFound2()
+    void shouldNotCreateMutesNotFound2()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -99,7 +109,7 @@ public class RemoveFollows {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.follows.remove($username, $username2);",
+            Result result = session.run( "CALL me.tucu.mutes.create($username, $username2);",
                     parameters("username", "maxdemarzi","username2", "not_there"));
 
             // Then I should get what I expect
@@ -123,8 +133,8 @@ public class RemoveFollows {
                     "name: 'Luke Gannon'," +
                     "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'cuddlefish'})" +
-                    "CREATE (max)<-[:FOLLOWS {time:datetime() - duration('P7D') }]-(jexp)" +
-                    "CREATE (max)<-[:FOLLOWS {time:datetime()  }]-(laeg)";
+                    "CREATE (max)<-[:MUTES {time:datetime() - duration('P7D') }]-(jexp)" +
+                    "CREATE (max)<-[:MUTES {time:datetime()  }]-(laeg)";
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
@@ -135,11 +145,6 @@ public class RemoveFollows {
         add(new HashMap<>() {{
             put("username", "jexp");
             put("name", "Michael Hunger");
-            put("hash", "0bd90aeb51d5982062f4f303a62df935");
-        }});
-        add(new HashMap<>() {{
-            put("username", "maxdemarzi");
-            put("name", "Max De Marzi");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
         }});
     }};
