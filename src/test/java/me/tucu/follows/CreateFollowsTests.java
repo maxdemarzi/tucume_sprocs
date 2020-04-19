@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.follows.FollowExceptions.ALREADY_FOLLOW;
+import static me.tucu.follows.FollowExceptions.SELF_FOLLOW;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -114,6 +115,25 @@ public class CreateFollowsTests {
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(UserExceptions.USER_NOT_FOUND.value));
+        }
+    }
+
+    @Test
+    void shouldNotCreateFollowsSelfFollow()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.follows.create($username, $username2);",
+                    parameters("username", "maxdemarzi","username2", "maxdemarzi"));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(SELF_FOLLOW.value));
         }
     }
 
