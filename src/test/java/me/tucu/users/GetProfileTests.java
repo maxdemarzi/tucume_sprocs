@@ -67,6 +67,63 @@ public class GetProfileTests {
         }
     }
 
+    @Test
+    void shouldGetProfileSecondUserSame()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.users.profile($username, $username2);",
+                    parameters("username", "maxdemarzi","username2", "maxdemarzi"));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(EXPECTED));
+        }
+    }
+
+    @Test
+    void shouldNotProfileUserNotFound()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.users.profile($username);",
+                    parameters("username", "not_there"));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(UserExceptions.USER_NOT_FOUND.value));
+        }
+    }
+
+    @Test
+    void shouldNotGetProfileSecondUserNotFound()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.users.profile($username, $username2);",
+                    parameters("username", "maxdemarzi","username2", "not_there"));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(UserExceptions.USER_NOT_FOUND.value));
+        }
+    }
+
     private static final String FIXTURE =
             "CREATE (max:User {username:'maxdemarzi', " +
                     "email: 'max@neo4j.com', " +
