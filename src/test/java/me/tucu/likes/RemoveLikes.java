@@ -10,7 +10,8 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.likes.LikesExceptions.*;
+import static me.tucu.likes.LikesExceptions.NOT_LIKING;
+import static me.tucu.likes.LikesExceptions.UNLIKE_TIMEOUT;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.schema.Properties.LIKED_TIME;
 import static me.tucu.schema.Properties.TIME;

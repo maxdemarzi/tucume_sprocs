@@ -42,3 +42,6 @@ Notes
      
 There are two types of "Post" nodes. Those that promote a "Product" and those that do not. 
 The regular posts have direct REPOST relationships, the promoting posts build a tree.        
+
+The likes.remove stored procedure is only in case of user error and only works for 1 minute 
+after the likes relationship was created.
