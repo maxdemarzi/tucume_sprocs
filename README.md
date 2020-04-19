@@ -34,6 +34,8 @@ Stored Procedures:
     CALL me.tucu.mutes.remove($username, $username2);
     
     CALL me.tucu.likes.get($username, $limit, $since, $username2);
+    CALL me.tucu.likes.create($username, $post_id);
+    CALL me.tucu.likes.remove($username, $post_id);
 
 Notes
 ------
