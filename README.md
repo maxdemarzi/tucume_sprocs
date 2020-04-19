@@ -45,3 +45,8 @@ The regular posts have direct REPOST relationships, the promoting posts build a 
 
 The likes.remove stored procedure is only in case of user error and only works for 1 minute 
 after the likes relationship was created.
+
+Badges
+------
+
+[![codecov](https://codecov.io/gh/maxdemarzi/tucume_sprocs/branch/master/graph/badge.svg)](https://codecov.io/gh/maxdemarzi/tucume_sprocs)
