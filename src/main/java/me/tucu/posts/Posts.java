@@ -7,6 +7,8 @@ import org.neo4j.graphdb.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
+import static me.tucu.schema.DatedRelationshipTypes.POSTED_ON;
+import static me.tucu.schema.DatedRelationshipTypes.REPOSTED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.utils.Time.dateFormatter;
 
@@ -28,7 +30,7 @@ public class Posts {
         // If the post has a few incoming relationships, just brute force it
         if (post.getDegree(Direction.INCOMING) < 1000) {
             for (Relationship r1 : post.getRelationships(Direction.INCOMING)) {
-                if (r1.getStartNode().equals(user) && r1.getType().name().startsWith("REPOSTED_ON_")) {
+                if (r1.getStartNode().equals(user) && r1.getType().name().startsWith(REPOSTED_ON)) {
                     return true;
                 }
             }
@@ -39,7 +41,7 @@ public class Posts {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
         while(now.isAfter(time)) {
-            RelationshipType repostedOn = RelationshipType.withName("REPOSTED_ON_" +
+            RelationshipType repostedOn = RelationshipType.withName(REPOSTED_ON +
                     now.format(dateFormatter));
 
             if (user.getDegree(repostedOn, Direction.OUTGOING)
@@ -65,7 +67,7 @@ public class Posts {
 
     public static Node getAuthor(Node post) {
         ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
-        RelationshipType original = RelationshipType.withName("POSTED_ON_" +
+        RelationshipType original = RelationshipType.withName(POSTED_ON +
                 time.format(dateFormatter));
         return post.getSingleRelationship(original, Direction.INCOMING).getStartNode();
     }
