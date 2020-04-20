@@ -1,6 +1,7 @@
 package me.tucu.mentions;
 
 import me.tucu.schema.Schema;
+import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.*;
@@ -12,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.schema.Properties.TIME;
+import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
@@ -143,6 +146,77 @@ public class GetMentionsTests {
         }
     }
 
+    @Test
+    void shouldGetMentionsSinceSecondUserSame()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            //1586111067 is Sunday, April 5, 2020 6:24:27 PM
+            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
+                    parameters("username", "jexp", "limit", 1, "since", 1586111067, "username2", "jexp"));
+
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.get(0), is(EXPECTED.get(2)));
+        }
+    }
+
+    @Test
+    void shouldNotGetMentionsUserNotFound()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            //1586111067 is Sunday, April 5, 2020 6:24:27 PM
+            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
+                    parameters("username", "not_there", "limit", 1, "since", 1586111067, "username2", "maxdemarzi"));
+
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(USER_NOT_FOUND.value));
+        }
+    }
+
+    @Test
+    void shouldNotGetMentionsSecondUserNotFound()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            //1586111067 is Sunday, April 5, 2020 6:24:27 PM
+            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
+                    parameters("username", "jexp", "limit", 1, "since", 1586111067, "username2", "not_there"));
+
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(USER_NOT_FOUND.value));
+        }
+    }
+
     private static final String FIXTURE =
             "CREATE (max:User {username:'maxdemarzi', " +
                     "email: 'max@neo4j.com', " +
@@ -169,12 +243,20 @@ public class GetMentionsTests {
                     "name: 'Mark Needham'," +
                     "password: 'jellyfish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
+                    "CREATE (jerk:User {username:'jerk', " +
+                    "email: 'jerk@neo4j.com', " +
+                    "hash: 'some hash'," +
+                    "name: 'Some Jerk'," +
+                    "password: 'jellyfish'," +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (post1:Post {status:'Hello @jexp', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +
                     "CREATE (post2:Post {status:'Hi @jexp', " +
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
                     "CREATE (post3:Post {status:'Stalking @jexp', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
+                    "CREATE (post4:Post {status:'I think @jexp sucks', " +
+                    "time: datetime('2020-04-14T09:53:23.000+0100')})" +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
                     "CREATE (mark)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
@@ -183,7 +265,9 @@ public class GetMentionsTests {
                     "CREATE (post3)-[:MENTIONED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(jexp)" +
                     "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post1)" +
                     "CREATE (max)-[:LIKES {time: datetime('2020-04-12T11:55:00.000+0100') }]->(post2)" +
-                    "CREATE (jexp)-[:BLOCKS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(mark)";
+                    "CREATE (jexp)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" +
+                    "CREATE (jexp)-[:FOLLOWS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(max)" +
+                    "CREATE (max)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" ;
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
