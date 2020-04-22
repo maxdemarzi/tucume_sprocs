@@ -130,8 +130,8 @@ public class Mentions {
     public static void createMentions(Node post, HashMap<String, Object> input, ZonedDateTime dateTime, Transaction tx) {
         Matcher mat = MENTIONS_PATTERN.matcher(((String)input.get(STATUS)).toLowerCase());
 
-        for (Relationship r1 : post.getRelationships(Direction.OUTGOING, RelationshipType.withName(MENTIONED_ON +
-                dateTime.format(dateFormatter)))) {
+        RelationshipType mentioned_on =  RelationshipType.withName(MENTIONED_ON + dateTime.format(dateFormatter));
+        for (Relationship r1 : post.getRelationships(Direction.OUTGOING,mentioned_on)) {
             r1.delete();
         }
 
@@ -140,8 +140,7 @@ public class Mentions {
             String username = mat.group(1);
             Node user = tx.findNode(Labels.User, USERNAME, username);
             if (user != null && !mentioned.contains(user)) {
-                Relationship r1 = post.createRelationshipTo(user, RelationshipType.withName(MENTIONED_ON +
-                        dateTime.format(dateFormatter)));
+                Relationship r1 = post.createRelationshipTo(user, mentioned_on);
                 r1.setProperty(TIME, dateTime);
                 mentioned.add(user);
             }

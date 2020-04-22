@@ -2,7 +2,6 @@ package me.tucu.mentions;
 
 import me.tucu.schema.Labels;
 import me.tucu.schema.Schema;
-import me.tucu.tags.Tags;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.graphdb.*;
@@ -17,6 +16,7 @@ import static me.tucu.schema.Properties.*;
 import static me.tucu.utils.Time.dateFormatter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateMentionsTests {
 
@@ -48,7 +48,7 @@ public class CreateMentionsTests {
                 HashMap<String, Object> input = new HashMap<>();
                 input.put(STATUS, post.getProperty(STATUS));
                 // When I use the method
-                Tags.createTags(post, input, ZonedDateTime.now(), tx);
+                Mentions.createMentions(post, input, ZonedDateTime.now(), tx);
             }
 
             tx.commit();
@@ -57,6 +57,7 @@ public class CreateMentionsTests {
         // Then I should get what I expect
         try(Transaction tx = neo4j.defaultDatabaseService().beginTx()) {
             ResourceIterator<Node> iter = tx.findNodes(Labels.Post);
+            assertTrue(iter.hasNext());
             while (iter.hasNext()) {
                 Node post = iter.next();
                 ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
