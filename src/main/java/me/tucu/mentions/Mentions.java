@@ -36,7 +36,7 @@ public class Mentions {
     @Context
     public Log log;
 
-    private static final Pattern MENTIONS_PATTERN = Pattern.compile("@[a-z][a-z0-9_]{2,31}");
+    private static final Pattern MENTIONS_PATTERN = Pattern.compile("@([a-z][a-z0-9_]{2,31})");
 
     @Procedure(name = "me.tucu.mentions.get", mode = Mode.READ)
     @Description("CALL me.tucu.mentions.get(username, limit, since, username2)")
