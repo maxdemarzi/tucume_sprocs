@@ -1,4 +1,4 @@
-package me.tucu.mentions;
+package me.tucu.posts;
 
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
 
-public class GetMentionsTests {
+public class GetPostsTests {
 
     private static Neo4j neo4j;
 
@@ -28,13 +28,13 @@ public class GetMentionsTests {
                 // disabling http server to speed up start
                 .withDisabledServer()
                 .withProcedure(Schema.class)
-                .withProcedure(Mentions.class)
+                .withProcedure(Posts.class)
                 .withFixture(FIXTURE)
                 .build();
     }
 
     @Test
-    void shouldGetMentions()
+    void shouldGetPosts()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -44,8 +44,8 @@ public class GetMentionsTests {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.mentions.get($username);",
-                    parameters("username", "jexp"));
+            Result result = session.run( "CALL me.tucu.posts.get($username);",
+                    parameters("username", "maxdemarzi"));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
@@ -61,7 +61,7 @@ public class GetMentionsTests {
     }
 
     @Test
-    void shouldGetMentionsLimited()
+    void shouldGetPostsLimited()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -71,8 +71,8 @@ public class GetMentionsTests {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit);",
-                    parameters("username", "jexp", "limit", 1));
+            Result result = session.run( "CALL me.tucu.posts.get($username, $limit);",
+                    parameters("username", "maxdemarzi", "limit", 1));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
@@ -88,7 +88,7 @@ public class GetMentionsTests {
     }
 
     @Test
-    void shouldGetMentionsSince()
+    void shouldGetPostsSince()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -99,8 +99,8 @@ public class GetMentionsTests {
 
             // When I use the procedure
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
-            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since);",
-                    parameters("username", "jexp", "limit", 1, "since", 1586111067));
+            Result result = session.run( "CALL me.tucu.posts.get($username, $limit, $since);",
+                    parameters("username", "maxdemarzi", "limit", 1, "since", 1586111067));
 
 
             // Then I should get what I expect
@@ -112,12 +112,12 @@ public class GetMentionsTests {
                 actual.add(modifiable);
             });
 
-            assertThat(actual.get(0), is(EXPECTED.get(2)));
+            assertThat(actual.get(0), is(EXPECTED.get(1)));
         }
     }
 
     @Test
-    void shouldGetMentionsSinceSecondUser()
+    void shouldGetPostsSinceSecondUser()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -128,8 +128,8 @@ public class GetMentionsTests {
 
             // When I use the procedure
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
-            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
-                    parameters("username", "jexp", "limit", 1, "since", 1586111067, "username2", "maxdemarzi"));
+            Result result = session.run( "CALL me.tucu.posts.get($username, $limit, $since, $username2);",
+                    parameters("username", "maxdemarzi", "limit", 1, "since", 1586111067, "username2", "jexp"));
 
 
             // Then I should get what I expect
@@ -141,12 +141,12 @@ public class GetMentionsTests {
                 actual.add(modifiable);
             });
 
-            assertThat(actual.get(0), is(EXPECTED2.get(1)));
+            assertThat(actual.get(0), is(EXPECTED2.get(0)));
         }
     }
 
     @Test
-    void shouldGetMentionsSinceSecondUserSame()
+    void shouldGetPostsSinceSecondUserSame()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -157,8 +157,8 @@ public class GetMentionsTests {
 
             // When I use the procedure
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
-            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
-                    parameters("username", "jexp", "limit", 1, "since", 1586111067, "username2", "jexp"));
+            Result result = session.run( "CALL me.tucu.posts.get($username, $limit, $since, $username2);",
+                    parameters("username", "maxdemarzi", "limit", 1, "since", 1586111067, "username2", "maxdemarzi"));
 
 
             // Then I should get what I expect
@@ -170,12 +170,12 @@ public class GetMentionsTests {
                 actual.add(modifiable);
             });
 
-            assertThat(actual.get(0), is(EXPECTED.get(2)));
+            assertThat(actual.get(0), is(EXPECTED.get(1)));
         }
     }
 
     @Test
-    void shouldNotGetMentionsUserNotFound()
+    void shouldNotGetPostsUserNotFound()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -186,7 +186,7 @@ public class GetMentionsTests {
 
             // When I use the procedure
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
-            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
+            Result result = session.run( "CALL me.tucu.posts.get($username, $limit, $since, $username2);",
                     parameters("username", "not_there", "limit", 1, "since", 1586111067, "username2", "maxdemarzi"));
 
 
@@ -196,7 +196,7 @@ public class GetMentionsTests {
     }
 
     @Test
-    void shouldNotGetMentionsSecondUserNotFound()
+    void shouldNotGetPostsSecondUserNotFound()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -207,7 +207,7 @@ public class GetMentionsTests {
 
             // When I use the procedure
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
-            Result result = session.run( "CALL me.tucu.mentions.get($username, $limit, $since, $username2);",
+            Result result = session.run( "CALL me.tucu.posts.get($username, $limit, $since, $username2);",
                     parameters("username", "jexp", "limit", 1, "since", 1586111067, "username2", "not_there"));
 
 
@@ -258,7 +258,7 @@ public class GetMentionsTests {
                     "time: datetime('2020-04-14T09:53:23.000+0100')})" +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
-                    "CREATE (mark)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
+                    "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
                     "CREATE (post1)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
                     "CREATE (post2)-[:MENTIONED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(jexp)" +
                     "CREATE (post3)-[:MENTIONED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(jexp)" +
@@ -270,19 +270,11 @@ public class GetMentionsTests {
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
-            put("username", "markhneedham");
-            put("name", "Mark Needham");
+            put("username", "maxdemarzi");
+            put("name", "Max De Marzi");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("status", "Stalking @jexp");
             put("likes", 0L);
-            put("reposts", 0L);
-        }});
-        add(new HashMap<>() {{
-            put("username", "laexample");
-            put("name", "Luke Gannon");
-            put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "Hi @jexp");
-            put("likes", 1L);
             put("reposts", 0L);
         }});
         add(new HashMap<>() {{
@@ -293,20 +285,9 @@ public class GetMentionsTests {
             put("likes", 0L);
             put("reposts", 1L);
         }});
-
     }};
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED2 = new ArrayList<>() {{
-        add(new HashMap<>() {{
-            put("username", "laexample");
-            put("name", "Luke Gannon");
-            put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "Hi @jexp");
-            put("likes", 1L);
-            put("reposts", 0L);
-            put("liked", true);
-            put("reposted", false);
-        }});
         add(new HashMap<>() {{
             put("username", "maxdemarzi");
             put("name", "Max De Marzi");

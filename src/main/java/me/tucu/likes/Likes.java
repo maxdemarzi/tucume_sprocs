@@ -92,7 +92,7 @@ public class Likes {
 
             tx.commit();
         }
-        results.sort(Comparator.comparing(m -> (ZonedDateTime) m.get(TIME), reverseOrder()));
+        results.sort(Comparator.comparing(m -> (ZonedDateTime) m.get(LIKED_TIME), reverseOrder()));
         return results.stream().limit(limit).map(MapResult::new);
     }
 

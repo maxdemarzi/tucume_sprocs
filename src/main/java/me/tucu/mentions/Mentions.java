@@ -36,7 +36,7 @@ public class Mentions {
     @Context
     public Log log;
 
-    private static final Pattern MENTIONS_PATTERN = Pattern.compile("@(\\S+)");
+    private static final Pattern MENTIONS_PATTERN = Pattern.compile("@[a-z][a-z0-9_]{2,31}");
 
     @Procedure(name = "me.tucu.mentions.get", mode = Mode.READ)
     @Description("CALL me.tucu.mentions.get(username, limit, since, username2)")
@@ -113,6 +113,7 @@ public class Mentions {
                                 properties.put(REPOSTED, userRepostedPost(tx, user2, post));
                             }
                             results.add(properties);
+                            count++;
                         }
                     }
 

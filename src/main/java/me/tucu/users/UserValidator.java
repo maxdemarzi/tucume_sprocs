@@ -10,7 +10,7 @@ import static me.tucu.users.UserExceptions.*;
 
 public class UserValidator {
 
-    private static final String usernamePattern = "^[a-z0-9_]{3,32}";
+    private static final String usernamePattern = "^[a-z][a-z0-9_]{2,31}";
 
     public static MapResult validate(Map parameters) {
         if(parameters == null) { return INVALID_INPUT; }
