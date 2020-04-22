@@ -41,6 +41,9 @@ Stored Procedures:
     
     CALL me.tucu.mentions.get($username, $limit, $since, $username2);
     // mentions are automatically created/removed on Post create/remove/update
+    
+    CALL me.tucu.tags.get($hashtag, $limit, $since, $username);
+    // tags are automatically created/removed on Post create/remove/update
 
 Notes
 ------
