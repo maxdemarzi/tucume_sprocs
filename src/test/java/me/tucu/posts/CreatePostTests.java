@@ -12,9 +12,11 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.Exceptions.INVALID_INPUT;
 import static me.tucu.posts.PostExceptions.EMPTY_STATUS;
 import static me.tucu.posts.PostExceptions.MISSING_STATUS;
 import static me.tucu.schema.Properties.TIME;
+import static me.tucu.users.UserExceptions.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -199,6 +201,7 @@ public class CreatePostTests {
         }
     }
 
+    @Test
     void shouldNotCreatePostUserOwesGold()
     {
         // In a try-block, to make sure we close the driver after the test
@@ -214,6 +217,101 @@ public class CreatePostTests {
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(Exceptions.INSUFFICIENT_FUNDS.value));
+        }
+    }
+
+    @Test
+    void shouldNotCreatePostMissingUsername()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.posts.create($parameters);",
+                    parameters("parameters", MISSING_USERNAME_INPUT));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(MISSING_USERNAME.value));
+        }
+    }
+
+    @Test
+    void shouldNotCreatePostBlankUsername()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.posts.create($parameters);",
+                    parameters("parameters", BLANK_USERNAME_INPUT));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(EMPTY_USERNAME.value));
+        }
+    }
+
+    @Test
+    void shouldNotCreatePostInvalidUsername()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.posts.create($parameters);",
+                    parameters("parameters", INVALID_USERNAME_INPUT));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(INVALID_USERNAME.value));
+        }
+    }
+
+    @Test
+    void shouldNotCreatePostEmptyInput()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.posts.create($parameters);",
+                    parameters("parameters", EMPTY_INPUT));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(INVALID_INPUT.value));
+        }
+    }
+
+    @Test
+    void shouldNotCreatePostNullInput()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.posts.create($parameters);",
+                    parameters("parameters", NULL_INPUT));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(INVALID_INPUT.value));
         }
     }
 
@@ -273,6 +371,24 @@ public class CreatePostTests {
         put("username", "maxdemarzi");
         put("status", "");
     }};
+
+    private static final HashMap MISSING_USERNAME_INPUT = new HashMap<String, Object>() {{
+        put("status", "some status");
+    }};
+
+    private static final HashMap BLANK_USERNAME_INPUT = new HashMap<String, Object>() {{
+        put("username", "");
+        put("status", "some status");
+    }};
+
+    private static final HashMap INVALID_USERNAME_INPUT = new HashMap<String, Object>() {{
+        put("username", "1");
+        put("status", "some status");
+    }};
+
+    private static final HashMap EMPTY_INPUT = new HashMap<String, Object>() {{ }};
+
+    private static final HashMap NULL_INPUT = null;
 
     private static final HashMap USER_NOT_THERE_INPUT = new HashMap<String, Object>() {{
         put("username", "not_there");
@@ -364,6 +480,7 @@ public class CreatePostTests {
                     "CREATE (mark:User {username:'markhneedham', " +
                     "email: 'mark@neo4j.com', " +
                     "name: 'Mark Needham'," +
+                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'jellyfish'," +
                     "silver: 299," +
                     "gold: -999})" +

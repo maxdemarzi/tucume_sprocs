@@ -179,6 +179,7 @@ public class RemoveLikesTests {
                     "CREATE (mark:User {username:'markhneedham', " +
                     "email: 'mark@neo4j.com', " +
                     "name: 'Mark Needham'," +
+                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'jellyfish'," +
                     "silver: 299," +
                     "gold: -999})" +
