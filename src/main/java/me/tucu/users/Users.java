@@ -147,10 +147,10 @@ public class Users {
         results.remove(PASSWORD);
         results.remove(SILVER);
         results.remove(GOLD);
-        long following = (long) user.getDegree(RelationshipTypes.FOLLOWS, Direction.OUTGOING);
-        long followers = (long) user.getDegree(RelationshipTypes.FOLLOWS, Direction.INCOMING);
-        long likes = (long) user.getDegree(RelationshipTypes.LIKES, Direction.OUTGOING);
-        long posts = (long) user.getDegree(Direction.OUTGOING) - following - likes;
+        long following = user.getDegree(RelationshipTypes.FOLLOWS, Direction.OUTGOING);
+        long followers = user.getDegree(RelationshipTypes.FOLLOWS, Direction.INCOMING);
+        long likes = user.getDegree(RelationshipTypes.LIKES, Direction.OUTGOING);
+        long posts = user.getDegree(Direction.OUTGOING) - following - likes;
         results.put("following", following);
         results.put("followers", followers);
         results.put("likes", likes);

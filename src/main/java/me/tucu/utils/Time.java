@@ -1,10 +1,13 @@
 package me.tucu.utils;
 
-import java.time.LocalDateTime;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
+
+import static java.time.ZoneOffset.UTC;
 
 public class Time {
     public static final ZoneId utc = TimeZone.getTimeZone("UTC").toZoneId();
@@ -14,13 +17,12 @@ public class Time {
             .withZone(utc);
 
 
-    public static Long getLatestTime(Long since) {
-        LocalDateTime dateTime;
-        if (since == null) {
-            dateTime = LocalDateTime.now(utc);
+    public static ZonedDateTime getLatestTime(Long since) {
+        if (since == -1L) {
+            return ZonedDateTime.now(Clock.systemUTC());
         } else {
-            dateTime = LocalDateTime.ofEpochSecond(since, 0, ZoneOffset.UTC);
+            Instant i = Instant.ofEpochSecond(since);
+            return ZonedDateTime.ofInstant(i, UTC);
         }
-        return dateTime.toEpochSecond(ZoneOffset.UTC);
     }
 }

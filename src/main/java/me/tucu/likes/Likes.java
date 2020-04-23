@@ -7,8 +7,6 @@ import org.neo4j.graphdb.*;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.*;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.reverseOrder;
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.likes.LikesExceptions.*;
@@ -25,6 +22,7 @@ import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.Posts.*;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
+import static me.tucu.utils.Time.getLatestTime;
 
 public class Likes {
     // This field declares that we need a GraphDatabaseService
@@ -48,13 +46,7 @@ public class Likes {
         ArrayList<Map<String, Object>> results = new ArrayList<>();
         limit =  abs(limit);
 
-        ZonedDateTime dateTime;
-        if (since == -1L) {
-            dateTime = ZonedDateTime.now(Clock.systemUTC());
-        } else {
-            Instant i = Instant.ofEpochSecond(since);
-            dateTime = ZonedDateTime.ofInstant(i, UTC);
-        }
+        ZonedDateTime dateTime = getLatestTime(since);
 
         try (Transaction tx = db.beginTx()) {
             Node user = tx.findNode(Labels.User, USERNAME, username);

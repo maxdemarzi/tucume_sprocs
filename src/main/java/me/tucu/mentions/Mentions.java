@@ -7,8 +7,6 @@ import org.neo4j.graphdb.*;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.*;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -17,7 +15,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.reverseOrder;
 import static me.tucu.likes.Likes.userLikesPost;
 import static me.tucu.posts.Posts.*;
@@ -25,6 +22,7 @@ import static me.tucu.schema.DatedRelationshipTypes.MENTIONED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
 import static me.tucu.utils.Time.dateFormatter;
+import static me.tucu.utils.Time.getLatestTime;
 
 public class Mentions {
     // This field declares that we need a GraphDatabaseService
@@ -48,16 +46,8 @@ public class Mentions {
         ArrayList<Map<String, Object>> results = new ArrayList<>();
         limit = abs(limit);
 
-        ZonedDateTime dateTime;
-        ZonedDateTime now;
-        if (since == -1L) {
-            dateTime = ZonedDateTime.now(Clock.systemUTC());
-            now = ZonedDateTime.now(Clock.systemUTC());
-        } else {
-            Instant i = Instant.ofEpochSecond(since);
-            dateTime = ZonedDateTime.ofInstant(i, UTC);
-            now = ZonedDateTime.ofInstant(i, UTC);
-        }
+        ZonedDateTime dateTime = getLatestTime(since);
+        ZonedDateTime now = getLatestTime(since);
 
         try (Transaction tx = db.beginTx()) {
             Node user = tx.findNode(Labels.User, USERNAME, username);
