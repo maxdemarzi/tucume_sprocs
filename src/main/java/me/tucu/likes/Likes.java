@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.abs;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.reverseOrder;
+import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.likes.LikesExceptions.*;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.Posts.*;

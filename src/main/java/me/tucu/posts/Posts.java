@@ -1,8 +1,11 @@
 package me.tucu.posts;
 
+import me.tucu.mentions.Mentions;
+import me.tucu.promotes.Promotes;
 import me.tucu.results.MapResult;
 import me.tucu.schema.Labels;
 import me.tucu.schema.RelationshipTypes;
+import me.tucu.tags.Tags;
 import org.neo4j.graphdb.*;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.*;
@@ -10,6 +13,7 @@ import org.neo4j.procedure.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
@@ -18,6 +22,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.abs;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.reverseOrder;
+import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.likes.Likes.userLikesPost;
 import static me.tucu.schema.DatedRelationshipTypes.POSTED_ON;
 import static me.tucu.schema.DatedRelationshipTypes.REPOSTED_ON;
@@ -75,7 +80,7 @@ public class Posts {
             }
 
             Map<String, Object> userProperties = user.getAllProperties();
-            ZonedDateTime earliest = (ZonedDateTime) user.getProperty(TIME);
+            ZonedDateTime earliest = ((ZonedDateTime) user.getProperty(TIME)).truncatedTo(ChronoUnit.DAYS);
             int count = 0;
 
             while (count < limit && now.isAfter(earliest)) {
@@ -110,6 +115,77 @@ public class Posts {
         return results.stream().limit(limit).map(MapResult::new);
     }
 
+    @Procedure(name = "me.tucu.posts.create", mode = Mode.WRITE)
+    @Description("CALL me.tucu.posts.create(properties)")
+    public Stream<MapResult> postCreate(@Name(value = "properties") Map parameters) {
+        Map<String, Object> results = null;
+        MapResult validation = PostValidator.validate(parameters);
+        if (!validation.isEmpty()) {
+            return Stream.of(validation);
+        }
+
+        try (Transaction tx = db.beginTx()) {
+            Node user = tx.findNode(Labels.User, USERNAME, parameters.get(USERNAME));
+            if (user == null) {
+                return Stream.of(USER_NOT_FOUND);
+            }
+            ZonedDateTime dateTime = ZonedDateTime.now();
+            Node post = tx.createNode(Labels.Post);
+            post.setProperty(STATUS, parameters.get(STATUS));
+            post.setProperty(TIME, dateTime);
+            Relationship posted_on = user.createRelationshipTo(post, RelationshipType.withName(POSTED_ON +
+                    dateTime.format(dateFormatter)));
+            posted_on.setProperty(TIME, dateTime);
+
+            Tags.createTags(post, parameters, dateTime, tx);
+            Mentions.createMentions(post, parameters, dateTime, tx);
+            Promotes.createPromotes(post, parameters, dateTime, tx);
+            results = post.getAllProperties();
+            results.put(USERNAME, parameters.get(USERNAME));
+            results.put(NAME, user.getProperty(NAME));
+            results.put(HASH, user.getProperty(HASH));
+            results.put(REPOSTS, 0);
+            results.put(LIKES, 0);
+
+            // Lock the users so nobody else can touch them,
+            // the lock will be release at the end of the transaction
+            tx.acquireWriteLock(user);
+
+            Long silver = (Long)user.getProperty(SILVER);
+            Long gold = (Long)user.getProperty(GOLD);
+
+            // User must have a positive balance of gold and silver
+            if (gold + silver < 1) {
+                return Stream.of(INSUFFICIENT_FUNDS);
+            }
+
+            if (silver > 0) {
+                posted_on.setProperty(SILVER, true);
+                silver = silver - 1;
+                user.setProperty(SILVER, silver);
+                results.put(SILVER, true);
+            } else {
+                posted_on.setProperty(GOLD, true);
+                gold = gold - 1;
+                user.setProperty(GOLD, gold);
+                results.put(GOLD, true);
+            }
+
+            tx.commit();
+        }
+
+        return Stream.of(new MapResult(results));
+    }
+
+    private Node createPost(Transaction tx, Map input, Node user, ZonedDateTime dateTime) {
+        Node post = tx.createNode(Labels.Post);
+        post.setProperty(STATUS, input.get(STATUS));
+        post.setProperty(TIME, dateTime);
+        Relationship r1 = user.createRelationshipTo(post, RelationshipType.withName(POSTED_ON +
+                dateTime.format(dateFormatter)));
+        r1.setProperty(TIME, dateTime);
+        return post;
+    }
 
     public static boolean userRepostedPost(Transaction tx, Node user, Node post) {
 
@@ -135,7 +211,7 @@ public class Posts {
         // If the post has lots of relationships, start from now and go backwards
         // until the post creation date checking it or the user for a repost relationship
         ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
+        ZonedDateTime time = ((ZonedDateTime)post.getProperty(TIME)).truncatedTo(ChronoUnit.DAYS);
         while(now.isAfter(time)) {
             RelationshipType repostedOn = RelationshipType.withName(REPOSTED_ON +
                     now.format(dateFormatter));

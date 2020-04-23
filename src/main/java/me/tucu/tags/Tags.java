@@ -10,6 +10,7 @@ import org.neo4j.procedure.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,7 +92,7 @@ public class Tags {
                 }
             }
 
-            ZonedDateTime earliest = (ZonedDateTime) tag.getProperty(TIME);
+            ZonedDateTime earliest = ((ZonedDateTime) tag.getProperty(TIME)).truncatedTo(ChronoUnit.DAYS);
             int count = 0;
 
             while (count < limit && now.isAfter(earliest)) {
@@ -132,7 +133,7 @@ public class Tags {
 
 
 
-    public static void createTags(Node post, HashMap<String, Object> input, ZonedDateTime dateTime, Transaction tx) {
+    public static void createTags(Node post, Map input, ZonedDateTime dateTime, Transaction tx) {
         Matcher mat = TAGS_PATTERN.matcher(((String)input.get(STATUS)).toLowerCase());
         for (Relationship r1 : post.getRelationships(Direction.OUTGOING, RelationshipType.withName(TAGGED_ON +
                 dateTime.format(dateFormatter)))) {

@@ -10,6 +10,7 @@ import org.neo4j.procedure.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,7 +88,7 @@ public class Mentions {
                 }
             }
 
-            ZonedDateTime earliest = (ZonedDateTime) user.getProperty(TIME);
+            ZonedDateTime earliest = ((ZonedDateTime) user.getProperty(TIME)).truncatedTo(ChronoUnit.DAYS);
             int count = 0;
 
             while (count < limit && now.isAfter(earliest)) {
@@ -127,7 +128,7 @@ public class Mentions {
         return results.stream().limit(limit).map(MapResult::new);
     }
 
-    public static void createMentions(Node post, HashMap<String, Object> input, ZonedDateTime dateTime, Transaction tx) {
+    public static void createMentions(Node post, Map input, ZonedDateTime dateTime, Transaction tx) {
         Matcher mat = MENTIONS_PATTERN.matcher(((String)input.get(STATUS)).toLowerCase());
 
         RelationshipType mentioned_on =  RelationshipType.withName(MENTIONED_ON + dateTime.format(dateFormatter));

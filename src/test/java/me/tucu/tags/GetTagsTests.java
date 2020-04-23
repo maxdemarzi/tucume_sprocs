@@ -198,7 +198,7 @@ public class GetTagsTests {
                     "CREATE (post3:Post {status:'I dream in #graphs', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
                     "CREATE (neo4j:Tag {name:'neo4j', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
+                    "time: datetime('2020-04-01T11:44:08.556+0100')})" +
                     "CREATE (graphs:Tag {name:'graphs', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +

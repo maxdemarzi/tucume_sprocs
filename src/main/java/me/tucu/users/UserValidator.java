@@ -10,19 +10,19 @@ import static me.tucu.users.UserExceptions.*;
 
 public class UserValidator {
 
-    private static final String usernamePattern = "^[a-z][a-z0-9_]{2,31}";
+    public static final String USERNAME_PATTERN = "^[a-z][a-z0-9_]{2,31}";
 
     public static MapResult validate(Map parameters) {
         if(parameters == null) { return INVALID_INPUT; }
         if(parameters.isEmpty()) { return INVALID_INPUT; }
 
-        // Check that the username is not empty and matches pattern described above
+        // Check that the username is not empty and matches the username pattern
         if(!parameters.containsKey(USERNAME)) {
             return MISSING_USERNAME;
         } else {
             String username = (String)parameters.get(USERNAME);
             if (username.isBlank()) { return EMPTY_USERNAME; }
-            if (!username.matches(usernamePattern)) { return INVALID_USERNAME; }
+            if (!username.matches(USERNAME_PATTERN)) { return INVALID_USERNAME; }
         }
 
         // Check that the email is not empty and has an @ sign

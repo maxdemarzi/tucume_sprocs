@@ -340,7 +340,7 @@ public class CreateUserTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'jexp', " +
+            "CREATE (jexp:User {username:'jexp', " +
                     "email: 'michael@neo4j.com', " +
                     "name: 'Michael Hunger'," +
                     "password: 'tunafish'," +
