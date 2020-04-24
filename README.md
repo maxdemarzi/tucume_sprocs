@@ -18,6 +18,12 @@ In the "neo4j.conf" file inside the Neo4j/conf folder add this line:
 
     dbms.security.procedures.unrestricted=me.tucu.*
 
+Before use:
+
+    // Create full text index for search
+    CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product','Tag'], ['status','username','name'])";
+
+
 Stored Procedures:
 
     CALL me.tucu.users.get($username);
@@ -25,6 +31,7 @@ Stored Procedures:
     CALL me.tucu.users.profile($username, $username2);
     
     CALL me.tucu.posts.get($username, $limit, $since, $username2);
+    CALL me.tucu.posts.create($parameters);
     
     CALL me.tucu.follows.followers($username, $limit, $since);
     CALL me.tucu.follows.following($username, $limit, $since);

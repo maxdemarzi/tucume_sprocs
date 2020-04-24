@@ -105,8 +105,8 @@ public class Posts {
     }
 
     @Procedure(name = "me.tucu.posts.create", mode = Mode.WRITE)
-    @Description("CALL me.tucu.posts.create(properties)")
-    public Stream<MapResult> postCreate(@Name(value = "properties") Map parameters) {
+    @Description("CALL me.tucu.posts.create(parameters)")
+    public Stream<MapResult> postCreate(@Name(value = "parameters") Map parameters) {
         Map<String, Object> results = null;
         MapResult validation = PostValidator.validate(parameters);
         if (!validation.isEmpty()) {

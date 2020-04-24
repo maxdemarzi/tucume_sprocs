@@ -293,7 +293,6 @@ public class GetMentionsTests {
             put("likes", 0L);
             put("reposts", 1L);
         }});
-
     }};
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED2 = new ArrayList<>() {{

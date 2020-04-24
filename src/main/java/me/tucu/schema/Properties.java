@@ -5,6 +5,7 @@ public final class Properties {
     private Properties() {
         throw new IllegalAccessError("Utility class");
     }
+    public static final String DAYS = "days";
     public static final String EMAIL = "email";
     public static final String FOLLOWERS_YOU_KNOW = "followers_you_know";
     public static final String FOLLOWERS_YOU_KNOW_COUNT = "followers_you_know_count";
@@ -27,5 +28,6 @@ public final class Properties {
     public static final String REPOSTER_USERNAME = "reposter_username";
     public static final String SILVER = "silver";
     public static final String STATUS = "status";
+    public static final String TERM = "term";
     public static final String TIME = "time";
 }

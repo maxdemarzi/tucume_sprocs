@@ -68,12 +68,12 @@ public class Tags {
                     return Stream.of(USER_NOT_FOUND);
                 }
 
-                // Hide mentions by muted users
+                // Hide posts by muted users
                 for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
                     muted.add(r1.getEndNode());
                 }
 
-                // Hide mentions of muted users by the people I follow
+                // Hide posts of muted users by the people I follow
                 for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS)) {
                     Node followed = r1.getEndNode();
                     for (Relationship r2 : followed.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
