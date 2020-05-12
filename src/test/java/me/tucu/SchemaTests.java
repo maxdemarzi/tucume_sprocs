@@ -37,7 +37,7 @@ public class SchemaTests {
             Result result = session.run( "CALL me.tucu.schema.create();");
 
             // Then I should get what I expect
-            assertThat(result.list().size(), equalTo(4));
+            assertThat(result.list().size(), equalTo(5));
         }
     }
 }

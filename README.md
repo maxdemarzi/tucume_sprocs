@@ -21,7 +21,7 @@ In the "neo4j.conf" file inside the Neo4j/conf folder add this line:
 Before use:
 
     // Create full text index for search
-    CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product','Tag'], ['status','username','name'])";
+    CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product'], ['status','username','name'])";
 
 
 Stored Procedures:

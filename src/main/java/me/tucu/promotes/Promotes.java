@@ -29,8 +29,8 @@ public class Promotes {
         // Users can only promote ONE Product in a Post
         boolean promoted = false;
         while (mat.find() && !promoted) {
-            String name = mat.group(1);
-            Node product = tx.findNode(Labels.Product, NAME, name);
+            String id = mat.group(1);
+            Node product = tx.findNode(Labels.Product, ID, id);
             if (product != null) {
                 Relationship r1 = post.createRelationshipTo(product, PROMOTES);
                 r1.setProperty(TIME, dateTime);

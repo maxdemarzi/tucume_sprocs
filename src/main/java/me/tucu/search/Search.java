@@ -43,7 +43,7 @@ public class Search {
         ArrayList<Map<String, Object>> results = new ArrayList<>();
         limit = abs(limit);
         offset = abs(offset);
-        int count = 0;
+
         boolean userType = true;
         boolean productType = true;
         boolean postType = true;

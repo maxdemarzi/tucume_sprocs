@@ -44,10 +44,13 @@ public class Schema {
             org.neo4j.graphdb.schema.Schema schema = tx.schema();
             if (!schema.getConstraints(Labels.Product).iterator().hasNext()) {
                 schema.constraintFor(Labels.Product)
-                        .assertPropertyIsUnique(NAME)
+                        .assertPropertyIsUnique(ID)
                         .create();
+
+                schema.indexFor(Labels.Product).on(NAME).create();
                 tx.commit();
-                results.add("(:Product {name}) constraint created");
+                results.add("(:Product {id}) constraint created");
+                results.add("(:Product {name}) index created");
             }
         }
 

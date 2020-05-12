@@ -1,6 +1,7 @@
 package me.tucu.search;
 
 import me.tucu.schema.Schema;
+import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.*;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.schema.Properties.TIME;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
@@ -108,7 +110,34 @@ public class GetSearchTests {
                 actual.add(modifiable);
             });
 
-            assertThat(actual, is(EXPECTED.subList(1,5)));
+            assertThat(actual, is(EXPECTED.subList(2,6)));
+        }
+    }
+
+    @Test
+    void shouldGetFullTextSearchProductType()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type);",
+                    parameters("term", "hello", "type", "product"));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual, is(EXPECTED.subList(1,2)));
         }
     }
 
@@ -196,6 +225,53 @@ public class GetSearchTests {
         }
     }
 
+    @Test
+    void shouldGetFullTextSearchWithLimitAndOffsetAndUsernameTwo()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type, $limit, $offset, $username);",
+                    parameters("term", "hello", "type", "post", "limit", 3, "offset", 2, "username", "maxdemarzi"));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.size(), is(1));
+            assertThat(actual.get(0), is(EXPECTED2));
+        }
+    }
+
+    @Test
+    void shouldNOTGetFullTextSearchWithLimitAndOffsetAndUserNotFound()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type, $limit, $offset, $username);",
+                    parameters("term", "hello", "type", "post", "limit", 3, "offset", 2, "username", "not_there"));
+
+            // Then I should get what I expect
+            assertThat(result.single().get("value").asMap(), equalTo(UserExceptions.USER_NOT_FOUND.value));
+        }
+    }
+
     private static final String INDEX = "CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product'], ['status','username','name'])";
 
     private static final String FIXTURE =
@@ -245,6 +321,8 @@ public class GetSearchTests {
                     "time: datetime('2020-04-14T09:53:23.000+0100')})" +
                     "CREATE (tag:Tag {name:'hello', " +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
+                    "CREATE (product:Product {id:'product1', name:'hello', " +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
                     "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
@@ -268,6 +346,11 @@ public class GetSearchTests {
             put("posts", 0L);
             put("likes", 0L);
             put("i_follow", false);
+        }});
+        add(new HashMap<>() {{
+            put("label", "product");
+            put("id", "product1");
+            put("name", "hello");
         }});
         add(new HashMap<>() {{
             put("label", "post");
