@@ -26,12 +26,13 @@ public class GetSearchTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Search.class)
+                .withFixture(INDEX)
                 .withFixture(FIXTURE)
                 .build();
     }
 
     @Test
-    void shouldGetSearch()
+    void shouldGetFullTextSearch()
     {
         // In a try-block, to make sure we close the driver after the test
         try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
@@ -57,6 +58,146 @@ public class GetSearchTests {
         }
     }
 
+    @Test
+    void shouldGetFullTextSearchUserType()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type);",
+                    parameters("term", "hello", "type", "user"));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.get(0), is(EXPECTED.get(0)));
+        }
+    }
+
+    @Test
+    void shouldGetFullTextSearchPostType()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type);",
+                    parameters("term", "hello", "type", "post"));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual, is(EXPECTED.subList(1,5)));
+        }
+    }
+
+    @Test
+    void shouldGetFullTextSearchWithLimit()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type, $limit);",
+                    parameters("term", "hello", "type", "", "limit", 2));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.size(), is(2));
+            assertThat(actual, is(EXPECTED.subList(0,2)));
+        }
+    }
+
+    @Test
+    void shouldGetFullTextSearchWithLimitAndOffset()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type, $limit, $offset);",
+                    parameters("term", "hello", "type", "", "limit", 2, "offset", 2));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.size(), is(2));
+            assertThat(actual, is(EXPECTED.subList(2,4)));
+        }
+    }
+
+    @Test
+    void shouldGetFullTextSearchWithLimitAndOffsetAndUsername()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            Result result = session.run( "CALL me.tucu.search.get($term, $type, $limit, $offset, $username);",
+                    parameters("term", "hello", "type", "post", "limit", 3, "offset", 2, "username", "jexp"));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual.size(), is(1));
+            assertThat(actual.get(0), is(EXPECTED2));
+        }
+    }
+
+    private static final String INDEX = "CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product'], ['status','username','name'])";
+
     private static final String FIXTURE =
             "CREATE (max:User {username:'maxdemarzi', " +
                     "email: 'max@neo4j.com', " +
@@ -68,7 +209,6 @@ public class GetSearchTests {
                     "email: 'michael@neo4j.com', " +
                     "name: 'Michael Hunger'," +
                     "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "time: 1490054400," +
                     "password: 'tunafish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (laeg:User {username:'laexample', " +
@@ -89,14 +229,22 @@ public class GetSearchTests {
                     "name: 'Some Jerk'," +
                     "password: 'jellyfish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
+                    "CREATE (hello:User {username:'hello_there', " +
+                    "email: 'hello_there@neo4j.com', " +
+                    "hash: 'some hash'," +
+                    "name: 'hello there user'," +
+                    "password: 'catfish'," +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (post1:Post {status:'Hello @jexp', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +
                     "CREATE (post2:Post {status:'Hello world', " +
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
-                    "CREATE (post3:Post {status:'Lowercase hello', " +
+                    "CREATE (post3:Post {status:'Lowercase #hello', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
                     "CREATE (post4:Post {status:'I think @jexp sucks but hello', " +
                     "time: datetime('2020-04-14T09:53:23.000+0100')})" +
+                    "CREATE (tag:Tag {name:'hello', " +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
                     "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
@@ -106,12 +254,50 @@ public class GetSearchTests {
                     "CREATE (post3)-[:MENTIONED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(jexp)" +
                     "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post1)" +
                     "CREATE (max)-[:LIKES {time: datetime('2020-04-12T11:55:00.000+0100') }]->(post2)" +
-                    "CREATE (jexp)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" +
                     "CREATE (jexp)-[:FOLLOWS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(max)" +
                     "CREATE (max)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" ;
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
+            put("label", "user");
+            put("username", "hello_there");
+            put("name", "hello there user");
+            put("hash", "some hash");
+            put("followers", 0L);
+            put("following", 0L);
+            put("posts", 0L);
+            put("likes", 0L);
+            put("i_follow", false);
+        }});
+        add(new HashMap<>() {{
+            put("label", "post");
+            put("username", "maxdemarzi");
+            put("name", "Max De Marzi");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("status", "Hello @jexp");
+            put("likes", 0L);
+            put("reposts", 1L);
+        }});
+        add(new HashMap<>() {{
+            put("label", "post");
+            put("username", "laexample");
+            put("name", "Luke Gannon");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("status", "Hello world");
+            put("likes", 1L);
+            put("reposts", 0L);
+        }});
+        add(new HashMap<>() {{
+            put("label", "post");
+            put("username", "maxdemarzi");
+            put("name", "Max De Marzi");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("status", "Lowercase #hello");
+            put("likes", 0L);
+            put("reposts", 0L);
+        }});
+        add(new HashMap<>() {{
+            put("label", "post");
             put("username", "jerk");
             put("name", "Some Jerk");
             put("hash", "some hash");
@@ -119,13 +305,17 @@ public class GetSearchTests {
             put("likes", 0L);
             put("reposts", 0L);
         }});
-        add(new HashMap<>() {{
-            put("username", "maxdemarzi");
-            put("name", "Max De Marzi");
-            put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "Lowercase hello");
-            put("likes", 0L);
-            put("reposts", 0L);
-        }});
+    }};
+
+    private static final HashMap<String, Object> EXPECTED2 =new HashMap<>() {{
+        put("label", "post");
+        put("username", "maxdemarzi");
+        put("name", "Max De Marzi");
+        put("hash", "0bd90aeb51d5982062f4f303a62df935");
+        put("status", "Lowercase #hello");
+        put("likes", 0L);
+        put("reposts", 0L);
+        put("liked", false);
+        put("reposted", false);
     }};
 }

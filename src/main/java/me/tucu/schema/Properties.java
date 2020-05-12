@@ -14,12 +14,16 @@ public final class Properties {
     public static final String HASH = "hash";
     public static final String ID = "id";
     public static final String I_FOLLOW = "i_follow";
+    public static final String LABEL = "label";
     public static final String LIKES = "likes";
     public static final String LIKED = "liked";
     public static final String LIKED_TIME = "liked_time";
     public static final String PASSWORD = "password";
+    public static final String POST = "post";
     public static final String POST_ID = "post_id";
+    public static final String PRODUCT = "product";
     public static final String NAME = "name";
+    public static final String USER = "user";
     public static final String USERNAME = "username";
     public static final String REPOSTS = "reposts";
     public static final String REPOSTED = "reposted";
@@ -28,6 +32,7 @@ public final class Properties {
     public static final String REPOSTER_USERNAME = "reposter_username";
     public static final String SILVER = "silver";
     public static final String STATUS = "status";
+    public static final String TAG = "tag";
     public static final String TERM = "term";
     public static final String TIME = "time";
 }
