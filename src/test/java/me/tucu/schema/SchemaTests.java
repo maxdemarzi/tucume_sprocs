@@ -1,6 +1,5 @@
-package me.tucu;
+package me.tucu.schema;
 
-import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.*;
