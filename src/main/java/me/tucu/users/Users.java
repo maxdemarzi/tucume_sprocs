@@ -157,4 +157,20 @@ public class Users {
         results.put("posts", posts);
         return results;
     }
+
+    public static void getMutedAndFollows(Node user, HashSet<Node> muted, HashSet<Node> followed) {
+        // Hide posts by muted users
+        for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
+            muted.add(r1.getEndNode());
+        }
+
+        // Hide posts of muted users by the people I follow
+        for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS)) {
+            Node follow = r1.getEndNode();
+            followed.add(follow);
+            for (Relationship r2 : follow.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
+                muted.add(r2.getEndNode());
+            }
+        }
+    }
 }

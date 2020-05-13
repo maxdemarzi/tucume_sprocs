@@ -18,6 +18,7 @@ import static me.tucu.likes.Likes.userLikesPost;
 import static me.tucu.posts.Posts.*;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
+import static me.tucu.users.Users.getMutedAndFollows;
 import static me.tucu.users.Users.getUserAttributes;
 import static me.tucu.utils.Comparators.LABEL_COMPARATOR;
 
@@ -68,27 +69,15 @@ public class Search {
             // Get the User
             Node user = null;
             HashSet<Node> muted = new HashSet<>();
-            HashSet<Node> followed = new HashSet<>();
+            HashSet<Node> follows = new HashSet<>();
 
             if (!username.isEmpty()) {
                 user = tx.findNode(Labels.User, USERNAME, username);
                 if (user == null) {
                     return Stream.of(USER_NOT_FOUND);
                 }
+                getMutedAndFollows(user, muted, follows);
 
-                // Hide posts by muted users
-                for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
-                    muted.add(r1.getEndNode());
-                }
-
-                // Hide posts of muted users by the people I follow
-                for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS)) {
-                    Node follow = r1.getEndNode();
-                    followed.add(follow);
-                    for (Relationship r2 : follow.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
-                        muted.add(r2.getEndNode());
-                    }
-                }
             }
 
             Map<String, Object> queryParameters = new HashMap<>();
@@ -104,7 +93,7 @@ public class Search {
                         // Ignore muted users
                         if (!muted.contains(node)) {
                             Map<String, Object> properties = getUserAttributes(node);
-                            properties.put(I_FOLLOW, followed.contains(node));
+                            properties.put(I_FOLLOW, follows.contains(node));
                             properties.put(LABEL, USER);
 
                             results.add(properties);
