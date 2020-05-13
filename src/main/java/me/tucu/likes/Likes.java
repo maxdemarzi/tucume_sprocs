@@ -70,7 +70,7 @@ public class Likes {
                     Node post = r1.getEndNode();
                     Map<String, Object> properties = post.getAllProperties();
                     properties.put(LIKED_TIME, time);
-                    Node author = getAuthor(tx, post);
+                    Node author = getAuthor(post);
                     properties.put(USERNAME, author.getProperty(USERNAME));
                     properties.put(NAME, author.getProperty(NAME));
                     properties.put(HASH, author.getProperty(HASH));
@@ -125,7 +125,7 @@ public class Likes {
             like.setProperty(TIME, ZonedDateTime.now());
             results.put(LIKED_TIME, ZonedDateTime.now());
 
-            Node author = getAuthor(tx, post);
+            Node author = getAuthor(post);
             results.put(USERNAME, author.getProperty(USERNAME));
             results.put(NAME, author.getProperty(NAME));
             results.put(HASH, author.getProperty(HASH));
@@ -217,7 +217,7 @@ public class Likes {
                 return Stream.of(UNLIKE_TIMEOUT);
             }
 
-            Node author = getAuthor(tx, post);
+            Node author = getAuthor(post);
             results.put(USERNAME, author.getProperty(USERNAME));
             results.put(NAME, author.getProperty(NAME));
             results.put(HASH, author.getProperty(HASH));

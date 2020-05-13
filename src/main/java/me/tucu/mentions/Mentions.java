@@ -91,7 +91,7 @@ public class Mentions {
 
                     ZonedDateTime time = (ZonedDateTime) post.getProperty(TIME);
                     if (time.isBefore(dateTime)) {
-                        Node author = getAuthor(tx, post);
+                        Node author = getAuthor(post);
                         // Ignore any mentions by muted users
                         if (!muted.contains(author)) {
                             properties.put(USERNAME, author.getProperty(USERNAME));

@@ -201,28 +201,33 @@ public class Posts {
             Node repost;
             Relationship reposted;
 
-            // It's an advertisement
+            // It's an advertisement, so we create a new post and a dated relationship from
+            // the user to the new post, and a regular REPOSTED relationship from the repost to the post
             if(post.hasRelationship(RelationshipTypes.PROMOTES) || !post.hasProperty(STATUS) ) {
                 repost = tx.createNode(Labels.Post);
                 repost.setProperty(POST_ID, post_id);
                 repost.setProperty(USERNAME, username);
-                reposted = repost.createRelationshipTo(post, reposted_on);
+                repost.createRelationshipTo(post, RelationshipTypes.REPOSTED);
+                reposted = user.createRelationshipTo(repost, reposted_on);
                 reposted.setProperty(TIME, dateTime);
+
+                // Get the actual Post if the post being reposted is a Promoting Post.
+                post = getOriginalPost(post);
             } else {
                 reposted = user.createRelationshipTo(post, reposted_on);
                 reposted.setProperty(TIME, dateTime);
             }
 
-            // Get the actual Post if the post being reposted is a Promoting Post.
-            post = getOriginalPost(post);
-
             results = post.getAllProperties();
             results.put(LIKES, (long)post.getDegree(RelationshipTypes.LIKES));
-            results.put(REPOSTS, 1 + getRepostedCount(post));
+            results.put(REPOSTS, getRepostedCount(post));
             results.put(LIKED, userLikesPost(user, post));
             results.put(REPOSTED, true);
 
-            Node author = getAuthor(tx, post);
+            Node author = getAuthor(post);
+            results.put(USERNAME, author.getProperty(USERNAME));
+            results.put(NAME, author.getProperty(NAME));
+            results.put(HASH, author.getProperty(HASH));
 
             // Lock the users so nobody else can touch them,
             // the lock will be release at the end of the transaction
@@ -294,14 +299,7 @@ public class Posts {
             return false;
     }
 
-    public static Node getAuthor(Transaction tx, Node post) {
-        // I am almost positive we never actually deal with this, but leaving it in for now.
-        // We should be jumping to the original post before asking for the author.
-        if(!post.hasProperty(STATUS)) {
-            long post_id = (long)post.getProperty(POST_ID);
-            post = tx.getNodeById(post_id);
-        }
-
+    public static Node getAuthor(Node post) {
         ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
         RelationshipType original = RelationshipType.withName(POSTED_ON +
                 time.format(dateFormatter));

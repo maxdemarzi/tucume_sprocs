@@ -108,7 +108,7 @@ public class Timeline {
                                 properties.put(REPOSTS, getRepostedCount(post));
                                 properties.put(LIKED, userLikesPost(user, post));
                                 properties.put(REPOSTED, userRepostedPost(tx, user, post));
-                                Node author = getAuthor(tx, post);
+                                Node author = getAuthor(post);
                                 if (!muted.contains(author)) {
                                     properties.put(USERNAME, author.getProperty(USERNAME));
                                     properties.put(NAME, author.getProperty(NAME));
