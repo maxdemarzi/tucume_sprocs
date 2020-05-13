@@ -7,6 +7,7 @@ import org.neo4j.driver.*;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -146,6 +147,35 @@ public class GetTagsTests {
     }
 
     @Test
+    void shouldGetTagsWithUserNotMuted()
+    {
+        // In a try-block, to make sure we close the driver after the test
+        try( Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.builder().withoutEncryption().build() ) )
+        {
+            // Given I've started Neo4j with the procedure
+            //       which my 'neo4j' rule above does.
+            Session session = driver.session();
+
+            // When I use the procedure
+            //1586111067 is Sunday, April 5, 2020 6:24:27 PM
+            Result result = session.run( "CALL me.tucu.tags.get($hashtag, $limit, $since, $username);",
+                    parameters("hashtag", "graphs", "limit", 25,
+                            "since", ZonedDateTime.parse("2020-04-16T00:00:00+00:00[UTC]").toEpochSecond(),
+                            "username", "maxdemarzi"));
+
+            // Then I should get what I expect
+            ArrayList<Map<String, Object>> actual = new ArrayList<>();
+            result.forEachRemaining(e -> {
+                Map<String, Object> record = e.get("value").asMap();
+                HashMap<String, Object> modifiable = new HashMap<>(record);
+                modifiable.remove(TIME);
+                actual.add(modifiable);
+            });
+
+            assertThat(actual, is(EXPECTED3));
+        }
+    }
+    @Test
     void shouldNotGetTagsNotFound()
     {
         // In a try-block, to make sure we close the driver after the test
@@ -191,12 +221,20 @@ public class GetTagsTests {
                     "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'swordfish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
+                    "CREATE (jerk:User {username:'jerk', " +
+                    "email: 'jerk@neo4j.com', " +
+                    "hash: 'some hash'," +
+                    "name: 'Some Jerk'," +
+                    "password: 'jellyfish'," +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (post1:Post {status:'I like #neo4j but I am biased.', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +
                     "CREATE (post2:Post {status:'#neo4j is the label that pays me', " +
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
                     "CREATE (post3:Post {status:'I dream in #graphs', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
+                    "CREATE (post4:Post {status:'I think #graphs sucks but hello', " +
+                    "time: datetime('2020-04-14T09:53:23.000+0100')})" +
                     "CREATE (neo4j:Tag {name:'neo4j', " +
                     "time: datetime('2020-04-01T11:44:08.556+0100')})" +
                     "CREATE (graphs:Tag {name:'graphs', " +
@@ -204,9 +242,12 @@ public class GetTagsTests {
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (max)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
                     "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
+                    "CREATE (jerk)-[:POSTED_ON_2020_04_14 {time: datetime('2020-04-14T09:53:23.000+0100') }]->(post4)" +
                     "CREATE (post1)-[:TAGGED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(neo4j)" +
                     "CREATE (post2)-[:TAGGED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(neo4j)" +
                     "CREATE (post3)-[:TAGGED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(graphs)" +
+                    "CREATE (post4)-[:TAGGED_ON_2020_04_14 {time: datetime('2020-04-14T09:53:23.000+0100') }]->(graphs)" +
+                    "CREATE (max)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" +
                     "CREATE (max)-[:LIKES]->(post1)";
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
@@ -237,6 +278,19 @@ public class GetTagsTests {
             put("likes", 1L);
             put("reposts", 0L);
             put("liked", true);
+            put("reposted", false);
+        }});
+    }};
+
+    private static final ArrayList<HashMap<String, Object>> EXPECTED3 = new ArrayList<>() {{
+        add(new HashMap<>() {{
+            put("username", "maxdemarzi");
+            put("name", "Max De Marzi");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("status", "I dream in #graphs");
+            put("likes", 0L);
+            put("reposts", 0L);
+            put("liked", false);
             put("reposted", false);
         }});
     }};

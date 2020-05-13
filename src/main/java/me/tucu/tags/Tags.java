@@ -22,6 +22,7 @@ import static me.tucu.schema.DatedRelationshipTypes.TAGGED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.tags.TagExceptions.TAG_NOT_FOUND;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
+import static me.tucu.users.Users.getMutedAndFollows;
 import static me.tucu.utils.Time.dateFormatter;
 import static me.tucu.utils.Time.getLatestTime;
 
@@ -62,6 +63,8 @@ public class Tags {
             // Get the User
             Node user = null;
             HashSet<Node> muted = new HashSet<>();
+            HashSet<Node> follows = new HashSet<>();
+
             if (!username.isEmpty()) {
                 user = tx.findNode(Labels.User, USERNAME, username);
                 if (user == null) {
@@ -69,17 +72,7 @@ public class Tags {
                 }
 
                 // Hide posts by muted users
-                for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
-                    muted.add(r1.getEndNode());
-                }
-
-                // Hide posts of muted users by the people I follow
-                for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS)) {
-                    Node followed = r1.getEndNode();
-                    for (Relationship r2 : followed.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
-                        muted.add(r2.getEndNode());
-                    }
-                }
+                getMutedAndFollows(user, muted, follows);
             }
 
             ZonedDateTime earliest = ((ZonedDateTime) tag.getProperty(TIME)).truncatedTo(ChronoUnit.DAYS);
