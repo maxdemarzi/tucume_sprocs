@@ -22,6 +22,7 @@ import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.Posts.*;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
+import static me.tucu.users.Users.payUser;
 import static me.tucu.utils.Time.getLatestTime;
 
 public class Likes {
@@ -69,7 +70,7 @@ public class Likes {
                     Node post = r1.getEndNode();
                     Map<String, Object> properties = post.getAllProperties();
                     properties.put(LIKED_TIME, time);
-                    Node author = getAuthor(post);
+                    Node author = getAuthor(tx, post);
                     properties.put(USERNAME, author.getProperty(USERNAME));
                     properties.put(NAME, author.getProperty(NAME));
                     properties.put(HASH, author.getProperty(HASH));
@@ -124,7 +125,7 @@ public class Likes {
             like.setProperty(TIME, ZonedDateTime.now());
             results.put(LIKED_TIME, ZonedDateTime.now());
 
-            Node author = getAuthor(post);
+            Node author = getAuthor(tx, post);
             results.put(USERNAME, author.getProperty(USERNAME));
             results.put(NAME, author.getProperty(NAME));
             results.put(HASH, author.getProperty(HASH));
@@ -146,24 +147,14 @@ public class Likes {
                 return Stream.of(INSUFFICIENT_FUNDS);
             }
 
-            if (silver > 0) {
-                like.setProperty(SILVER, true);
-                silver = silver - 1;
-                user.setProperty(SILVER, silver);
-                author.setProperty(SILVER, (Long)author.getProperty(SILVER) + 1);
-                results.put(SILVER, true);
-            } else {
-                like.setProperty(GOLD, true);
-                gold = gold - 1;
-                user.setProperty(GOLD, gold);
-                author.setProperty(GOLD, (Long)author.getProperty(GOLD) + 1);
-                results.put(GOLD, true);
-            }
+            payUser(results, user, like, author, silver, gold);
             tx.commit();
         }
 
         return Stream.of(new MapResult(results));
     }
+
+
 
     @Procedure(name = "me.tucu.likes.remove", mode = Mode.WRITE)
     @Description("CALL me.tucu.likes.remove(username, post_id)")
@@ -226,7 +217,7 @@ public class Likes {
                 return Stream.of(UNLIKE_TIMEOUT);
             }
 
-            Node author = getAuthor(post);
+            Node author = getAuthor(tx, post);
             results.put(USERNAME, author.getProperty(USERNAME));
             results.put(NAME, author.getProperty(NAME));
             results.put(HASH, author.getProperty(HASH));

@@ -173,4 +173,20 @@ public class Users {
             }
         }
     }
+
+    public static void payUser(Map<String, Object> results, Node user, Relationship like, Node author, Long silver, Long gold) {
+        if (silver > 0) {
+            like.setProperty(SILVER, true);
+            silver = silver - 1;
+            user.setProperty(SILVER, silver);
+            author.setProperty(SILVER, (Long)author.getProperty(SILVER) + 1);
+            results.put(SILVER, true);
+        } else {
+            like.setProperty(GOLD, true);
+            gold = gold - 1;
+            user.setProperty(GOLD, gold);
+            author.setProperty(GOLD, (Long)author.getProperty(GOLD) + 1);
+            results.put(GOLD, true);
+        }
+    }
 }

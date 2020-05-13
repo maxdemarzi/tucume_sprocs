@@ -21,10 +21,13 @@ import static java.lang.Math.abs;
 import static java.util.Collections.reverseOrder;
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.likes.Likes.userLikesPost;
+import static me.tucu.posts.PostExceptions.POST_ALREADY_REPOSTED;
+import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.schema.DatedRelationshipTypes.POSTED_ON;
 import static me.tucu.schema.DatedRelationshipTypes.REPOSTED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
+import static me.tucu.users.Users.payUser;
 import static me.tucu.utils.Time.dateFormatter;
 import static me.tucu.utils.Time.getLatestTime;
 
@@ -106,7 +109,7 @@ public class Posts {
 
     @Procedure(name = "me.tucu.posts.create", mode = Mode.WRITE)
     @Description("CALL me.tucu.posts.create(parameters)")
-    public Stream<MapResult> postCreate(@Name(value = "parameters") Map parameters) {
+    public Stream<MapResult> createPost(@Name(value = "parameters") Map parameters) {
         Map<String, Object> results = null;
         MapResult validation = PostValidator.validate(parameters);
         if (!validation.isEmpty()) {
@@ -166,15 +169,80 @@ public class Posts {
         return Stream.of(new MapResult(results));
     }
 
-    private Node createPost(Transaction tx, Map input, Node user, ZonedDateTime dateTime) {
-        Node post = tx.createNode(Labels.Post);
-        post.setProperty(STATUS, input.get(STATUS));
-        post.setProperty(TIME, dateTime);
-        Relationship r1 = user.createRelationshipTo(post, RelationshipType.withName(POSTED_ON +
-                dateTime.format(dateFormatter)));
-        r1.setProperty(TIME, dateTime);
-        return post;
+    @Procedure(name = "me.tucu.posts.repost", mode = Mode.WRITE)
+    @Description("CALL me.tucu.posts.repost(username, post_id)")
+    public Stream<MapResult> createRepost(@Name(value = "username", defaultValue = "") String username,
+                                         @Name(value = "post_id", defaultValue = "-1") Long post_id) {
+        Map<String, Object> results = null;
+        ZonedDateTime dateTime = ZonedDateTime.now();
+        try (Transaction tx = db.beginTx()) {
+            Node user = tx.findNode(Labels.User, USERNAME, username);
+            if (user == null) {
+                return Stream.of(USER_NOT_FOUND);
+            }
+            Node post;
+            try {
+                post = tx.getNodeById(post_id);
+            } catch (Exception exception) {
+                return Stream.of(POST_NOT_FOUND);
+            }
+
+            if (!post.hasLabel(Labels.Post)) {
+                return Stream.of(POST_NOT_FOUND);
+            }
+
+            if (userRepostedPost(tx, user, post)) {
+                return Stream.of(POST_ALREADY_REPOSTED);
+            }
+
+            RelationshipType reposted_on = RelationshipType.withName(REPOSTED_ON +
+                    dateTime.format(dateFormatter));
+
+            Node repost;
+            Relationship reposted;
+
+            // It's an advertisement
+            if(post.hasRelationship(RelationshipTypes.PROMOTES) || !post.hasProperty(STATUS) ) {
+                repost = tx.createNode(Labels.Post);
+                repost.setProperty(POST_ID, post_id);
+                repost.setProperty(USERNAME, username);
+                reposted = repost.createRelationshipTo(post, reposted_on);
+                reposted.setProperty(TIME, dateTime);
+            } else {
+                reposted = user.createRelationshipTo(post, reposted_on);
+                reposted.setProperty(TIME, dateTime);
+            }
+
+            // Get the actual Post if the post being reposted is a Promoting Post.
+            post = getOriginalPost(post);
+
+            results = post.getAllProperties();
+            results.put(LIKES, (long)post.getDegree(RelationshipTypes.LIKES));
+            results.put(REPOSTS, 1 + getRepostedCount(post));
+            results.put(LIKED, userLikesPost(user, post));
+            results.put(REPOSTED, true);
+
+            Node author = getAuthor(tx, post);
+
+            // Lock the users so nobody else can touch them,
+            // the lock will be release at the end of the transaction
+            tx.acquireWriteLock(user);
+            tx.acquireWriteLock(author);
+
+            Long silver = (Long)user.getProperty(SILVER);
+            Long gold = (Long)user.getProperty(GOLD);
+
+            // User must have a positive balance of gold and silver
+            if (gold + silver < 1) {
+                return Stream.of(INSUFFICIENT_FUNDS);
+            }
+
+            payUser(results, user, reposted, author, silver, gold);
+            tx.commit();
+        }
+        return Stream.of(new MapResult(results));
     }
+
 
     public static boolean userRepostedPost(Transaction tx, Node user, Node post) {
 
@@ -226,7 +294,14 @@ public class Posts {
             return false;
     }
 
-    public static Node getAuthor(Node post) {
+    public static Node getAuthor(Transaction tx, Node post) {
+        // I am almost positive we never actually deal with this, but leaving it in for now.
+        // We should be jumping to the original post before asking for the author.
+        if(!post.hasProperty(STATUS)) {
+            long post_id = (long)post.getProperty(POST_ID);
+            post = tx.getNodeById(post_id);
+        }
+
         ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
         RelationshipType original = RelationshipType.withName(POSTED_ON +
                 time.format(dateFormatter));

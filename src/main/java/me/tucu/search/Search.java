@@ -108,7 +108,7 @@ public class Search {
                     }
 
                     if (node.hasLabel(Labels.Post) && postType) {
-                        Node author = getAuthor(node);
+                        Node author = getAuthor(tx, node);
                         // Ignore any mentions by muted users
                         if (!muted.contains(author)) {
                             Map<String, Object> properties = node.getAllProperties();
