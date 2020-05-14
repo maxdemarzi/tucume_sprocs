@@ -46,7 +46,7 @@ public class Posts {
 
     @Procedure(name = "me.tucu.posts.get", mode = Mode.READ)
     @Description("CALL me.tucu.posts.get(username, limit, since, username2)")
-    public Stream<MapResult> gePosts(@Name(value = "username", defaultValue = "") String username,
+    public Stream<MapResult> getPosts(@Name(value = "username", defaultValue = "") String username,
                                       @Name(value = "limit", defaultValue = "25") Long limit,
                                       @Name(value = "since", defaultValue = "-1") Long since,
                                       @Name(value = "username2", defaultValue = "") String username2) {
@@ -136,11 +136,11 @@ public class Posts {
             results.put(USERNAME, parameters.get(USERNAME));
             results.put(NAME, user.getProperty(NAME));
             results.put(HASH, user.getProperty(HASH));
-            results.put(REPOSTS, 0);
-            results.put(LIKES, 0);
+            results.put(REPOSTS, 0L);
+            results.put(LIKES, 0L);
 
             // Lock the users so nobody else can touch them,
-            // the lock will be release at the end of the transaction
+            // the lock will be released at the end of the transaction
             tx.acquireWriteLock(user);
 
             Long silver = (Long)user.getProperty(SILVER);
@@ -169,10 +169,81 @@ public class Posts {
         return Stream.of(new MapResult(results));
     }
 
+    @Procedure(name = "me.tucu.posts.reply", mode = Mode.WRITE)
+    @Description("CALL me.tucu.posts.reply(username, post_id)")
+    public Stream<MapResult> createReply(@Name(value = "post_id", defaultValue = "-1") Long post_id,
+                                         @Name(value = "parameters", defaultValue = "{}") Map parameters) {
+        Map<String, Object> results = null;
+        MapResult validation = PostValidator.validate(parameters);
+        if (!validation.isEmpty()) {
+            return Stream.of(validation);
+        }
+
+        try (Transaction tx = db.beginTx()) {
+            Node user = tx.findNode(Labels.User, USERNAME, parameters.get(USERNAME));
+            if (user == null) {
+                return Stream.of(USER_NOT_FOUND);
+            }
+            Node post;
+            try {
+                post = tx.getNodeById(post_id);
+            } catch (Exception exception) {
+                return Stream.of(POST_NOT_FOUND);
+            }
+
+            if (!post.hasLabel(Labels.Post)) {
+                return Stream.of(POST_NOT_FOUND);
+            }
+
+            ZonedDateTime dateTime = ZonedDateTime.now();
+            Node reply = tx.createNode(Labels.Post);
+            reply.setProperty(STATUS, parameters.get(STATUS));
+            reply.setProperty(TIME, dateTime);
+            Relationship posted_on = user.createRelationshipTo(reply, RelationshipType.withName(POSTED_ON +
+                    dateTime.format(dateFormatter)));
+            posted_on.setProperty(TIME, dateTime);
+
+            // If we are replying to a repost of an advertisement, get the original post
+            post = getOriginalPost(post);
+
+            Relationship replied_to = reply.createRelationshipTo(post, RelationshipTypes.REPLIED_TO);
+            replied_to.setProperty(TIME, dateTime);
+
+            Tags.createTags(reply, parameters, dateTime, tx);
+            Mentions.createMentions(reply, parameters, dateTime, tx);
+            Promotes.createPromotes(reply, parameters, dateTime, tx);
+            results = reply.getAllProperties();
+            results.put(USERNAME, parameters.get(USERNAME));
+            results.put(NAME, user.getProperty(NAME));
+            results.put(HASH, user.getProperty(HASH));
+            results.put(REPOSTS, 0L);
+            results.put(LIKES, 0L);
+
+            Node author = getAuthor(post);
+
+            // Lock the users so nobody else can touch them,
+            // the lock will be released at the end of the transaction
+            tx.acquireWriteLock(user);
+            tx.acquireWriteLock(author);
+
+            Long silver = (Long)user.getProperty(SILVER);
+            Long gold = (Long)user.getProperty(GOLD);
+
+            // User must have a positive balance of gold and silver
+            if (gold + silver < 1) {
+                return Stream.of(INSUFFICIENT_FUNDS);
+            }
+
+            payUser(results, user, posted_on, author, silver, gold);
+            tx.commit();
+        }
+        return Stream.of(new MapResult(results));
+    }
+
     @Procedure(name = "me.tucu.posts.repost", mode = Mode.WRITE)
-    @Description("CALL me.tucu.posts.repost(username, post_id)")
-    public Stream<MapResult> createRepost(@Name(value = "username", defaultValue = "") String username,
-                                         @Name(value = "post_id", defaultValue = "-1") Long post_id) {
+    @Description("CALL me.tucu.posts.repost(post_id, username)")
+    public Stream<MapResult> createRepost(@Name(value = "post_id", defaultValue = "-1") Long post_id,
+                                          @Name(value = "username", defaultValue = "") String username) {
         Map<String, Object> results = null;
         ZonedDateTime dateTime = ZonedDateTime.now();
         try (Transaction tx = db.beginTx()) {
@@ -203,7 +274,7 @@ public class Posts {
 
             // It's an advertisement, so we create a new post and a dated relationship from
             // the user to the new post, and a regular REPOSTED relationship from the repost to the post
-            if(post.hasRelationship(RelationshipTypes.PROMOTES) || !post.hasProperty(STATUS) ) {
+            if(isAnAdvertisement(post)) {
                 repost = tx.createNode(Labels.Post);
                 repost.setProperty(POST_ID, post_id);
                 repost.setProperty(USERNAME, username);
@@ -230,7 +301,7 @@ public class Posts {
             results.put(HASH, author.getProperty(HASH));
 
             // Lock the users so nobody else can touch them,
-            // the lock will be release at the end of the transaction
+            // the lock will be released at the end of the transaction
             tx.acquireWriteLock(user);
             tx.acquireWriteLock(author);
 
@@ -248,11 +319,13 @@ public class Posts {
         return Stream.of(new MapResult(results));
     }
 
+    public static boolean isAnAdvertisement(Node post) {
+        return (post.hasRelationship(RelationshipTypes.PROMOTES) || !post.hasProperty(STATUS));
+    }
 
     public static boolean userRepostedPost(Transaction tx, Node user, Node post) {
-
-        // It's an advertisement
-        if(post.hasRelationship(RelationshipTypes.PROMOTES)) {
+        // It's an advertisement, we're going "outward" to find if a repost node exists.
+        if(isAnAdvertisement(post)) {
             Long postId = post.getId();
             String username = (String)user.getProperty(USERNAME);
             ResourceIterator<Node> iterator = tx.findNodes(Labels.Post, USERNAME, username, POST_ID, postId);

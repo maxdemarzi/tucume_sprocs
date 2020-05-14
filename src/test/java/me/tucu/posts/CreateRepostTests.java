@@ -43,7 +43,7 @@ public class CreateRepostTests {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.posts.repost($username, $post_id);",
+            Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
                     parameters("username", "laexample", "post_id", 4));
 
             // Then I should get what I expect
@@ -66,7 +66,7 @@ public class CreateRepostTests {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.posts.repost($username, $post_id);",
+            Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
                     parameters("username", "not_there", "post_id", 4));
 
             // Then I should get what I expect
@@ -85,7 +85,7 @@ public class CreateRepostTests {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.posts.repost($username, $post_id);",
+            Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
                     parameters("username", "laexample", "post_id", 400));
 
             // Then I should get what I expect
@@ -104,7 +104,7 @@ public class CreateRepostTests {
             Session session = driver.session();
 
             // When I use the procedure
-            Result result = session.run( "CALL me.tucu.posts.repost($username, $post_id);",
+            Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
                     parameters("username", "laexample", "post_id", 1));
 
             // Then I should get what I expect

@@ -32,7 +32,8 @@ Stored Procedures:
     
     CALL me.tucu.posts.get($username, $limit, $since, $username2);
     CALL me.tucu.posts.create($parameters);
-    CALL me.tucu.posts.repost($username, $post_id);
+    CALL me.tucu.posts.repost($post_id, $username);
+    CALL me.tucu.posts.reply($post_id, $parameters);
     
     CALL me.tucu.follows.followers($username, $limit, $since);
     CALL me.tucu.follows.following($username, $limit, $since);
