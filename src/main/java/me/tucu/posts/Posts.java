@@ -278,6 +278,7 @@ public class Posts {
                 repost = tx.createNode(Labels.Post);
                 repost.setProperty(POST_ID, post_id);
                 repost.setProperty(USERNAME, username);
+                repost.setProperty(TIME, dateTime);
                 repost.createRelationshipTo(post, RelationshipTypes.REPOSTED);
                 reposted = user.createRelationshipTo(repost, reposted_on);
                 reposted.setProperty(TIME, dateTime);
@@ -409,6 +410,14 @@ public class Posts {
             post = post.getSingleRelationship(RelationshipTypes.REPOSTED, Direction.OUTGOING).getEndNode();
         }
         return post;
+    }
+
+    public static Node getProduct(Node post) {
+        while(post.hasRelationship(Direction.OUTGOING, RelationshipTypes.REPOSTED)) {
+            post = post.getSingleRelationship(RelationshipTypes.REPOSTED, Direction.OUTGOING).getEndNode();
+        }
+
+        return post.getSingleRelationship(RelationshipTypes.PROMOTES, Direction.OUTGOING).getEndNode();
     }
 
 }

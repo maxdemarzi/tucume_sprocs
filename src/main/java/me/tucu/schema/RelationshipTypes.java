@@ -7,6 +7,7 @@ public enum RelationshipTypes implements RelationshipType {
     LIKES,
     MUTES,
     PROMOTES,
+    PURCHASED,
     REPLIED_TO,
     REPOSTED
 }

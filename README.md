@@ -67,6 +67,11 @@ The regular posts have direct REPOST relationships, the promoting posts build a 
 The likes.remove stored procedure is only in case of user error and only works for 1 minute 
 after the likes relationship was created.
 
+Seller wants to know:
+- how many purchases per day => Need Dynamic Rel Type
+- how big the pyramid of a post is => Follow REPOSTED
+ 
+
 Badges
 ------
 
