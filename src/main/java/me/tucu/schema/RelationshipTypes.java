@@ -9,5 +9,6 @@ public enum RelationshipTypes implements RelationshipType {
     PROMOTES,
     PURCHASED,
     REPLIED_TO,
-    REPOSTED
+    REPOSTED,
+    SELLS
 }

@@ -380,6 +380,13 @@ public class Posts {
         return post.getSingleRelationship(original, Direction.INCOMING).getStartNode();
     }
 
+    public static Node getReposter(Node post) {
+        ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
+        RelationshipType original = RelationshipType.withName(REPOSTED_ON +
+                time.format(dateFormatter));
+        return post.getSingleRelationship(original, Direction.INCOMING).getStartNode();
+    }
+
     public static Long getRepostedCount(Node post) {
         // It's a regular post
         if(!post.hasRelationship(RelationshipTypes.PROMOTES)) {

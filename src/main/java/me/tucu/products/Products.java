@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
-import static me.tucu.posts.Posts.getProduct;
+import static me.tucu.posts.Posts.*;
 import static me.tucu.schema.DatedRelationshipTypes.PURCHASED_ON;
 import static me.tucu.schema.DatedRelationshipTypes.REPOSTED_ON;
 import static me.tucu.schema.Properties.*;
@@ -67,55 +68,73 @@ public class Products {
                 return Stream.of(POST_NOT_FOUND);
             }
 
+            Node product = getProduct(post);
+            results = product.getAllProperties();
+            Long price = (Long) results.get(PRICE);
+
             RelationshipType purchased_on = RelationshipType.withName(PURCHASED_ON +
                     dateTime.format(dateFormatter));
 
             Relationship purchased = user.createRelationshipTo(post, purchased_on);
             purchased.setProperty(TIME, dateTime);
+            purchased.setProperty(PRICE, price);
 
-
-
-            Node product = getProduct(post);
+            // I am duplicating data here, an altenative is to create a Purchase node instead
+            // The first purchased relationship lets me quickly build the commission tree and see new purchases
+            // The second purchased relationship lets me know what the user has purchased quickly
             Relationship purchased2 = user.createRelationshipTo(product, RelationshipTypes.PURCHASED);
             purchased2.setProperty(TIME, dateTime);
+            purchased2.setProperty(PRICE, price);
 
-            Long price = (Long) product.getProperty(PRICE);
+            Node seller = product.getSingleRelationship(RelationshipTypes.SELLS, Direction.INCOMING).getStartNode();
+
             Double sellerCommission = Math.floor(price * splitCommission);
 
-            // Handle purchase direct from seller
-            if (post.hasRelationship(Direction.OUTGOING, RelationshipTypes.PROMOTES)) {
-                sellerCommission = Math.floor(price * (splitCommission + directCommission));
-            } else {
-                List<Node> chain = new ArrayList<>();
-                List<Integer> commisions = new ArrayList<>();
-                while (post.hasRelationship(Direction.OUTGOING, RelationshipTypes.REPOSTED)) {
-                    chain.add(getReposter(post));
-                    post = post.getSingleRelationship(RelationshipTypes.REPOSTED, Direction.OUTGOING).getEndNode();
-                }
+            List<Node> chain = new ArrayList<>();
+            List<Integer> commisions = new ArrayList<>();
 
-                chain = chain.subList(0, Math.min(chain.size(), 3));
+            while (post.hasRelationship(Direction.OUTGOING, RelationshipTypes.REPOSTED)) {
+                chain.add(getReposter(post));
+                post = post.getSingleRelationship(RelationshipTypes.REPOSTED, Direction.OUTGOING).getEndNode();
+            }
+            chain.add(getAuthor(post));
+            chain = chain.subList(0, Math.min(chain.size(), 4));
 
-                for (Double split : splits.get(chain.size())){
-                    commisions.add(((Double)Math.floor(price * split)).intValue());
-                }
-
-                //todo: calculate commission right here and now
-                // lock the buyer and the seller, and the chain and pay them.
-
-
+            for (Double split : splits.get(chain.size())){
+                commisions.add(((Double)Math.floor(price * split)).intValue());
             }
 
+            // Lock the users so nobody else can touch them,
+            // the lock will be released at the end of the transaction
+            tx.acquireWriteLock(user);
+            tx.acquireWriteLock(seller);
+            for (Node marketer : chain) {
+                tx.acquireWriteLock(marketer);
+            }
+
+            Long userGold = (Long)user.getProperty(GOLD);
+            if (userGold < price) {
+                return Stream.of(INSUFFICIENT_FUNDS);
+            }
+
+            Long sellerGold = (Long)seller.getProperty(GOLD);
+
+            userGold -= price;
+            sellerGold += sellerCommission.longValue();
+
+            user.setProperty(GOLD, userGold);
+            seller.setProperty(GOLD, sellerGold);
+
+            for(int counter = 0; counter <= chain.size(); counter++){
+                Node marketer = chain.get(counter);
+                Long marketerGold = (Long)marketer.getProperty(GOLD);
+                marketerGold += commisions.get(counter);
+                marketer.setProperty(GOLD, marketerGold);
+            }
 
 
         }
         return Stream.of(new MapResult(results));
-    }
-
-    public static Node getReposter(Node post) {
-        ZonedDateTime time = (ZonedDateTime)post.getProperty(TIME);
-        RelationshipType original = RelationshipType.withName(REPOSTED_ON +
-                time.format(dateFormatter));
-        return post.getSingleRelationship(original, Direction.INCOMING).getStartNode();
     }
 
 }
