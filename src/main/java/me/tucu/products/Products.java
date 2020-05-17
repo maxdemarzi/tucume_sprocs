@@ -18,7 +18,6 @@ import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.Posts.*;
 import static me.tucu.schema.DatedRelationshipTypes.PURCHASED_ON;
-import static me.tucu.schema.DatedRelationshipTypes.REPOSTED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
 import static me.tucu.utils.Time.dateFormatter;
@@ -71,6 +70,7 @@ public class Products {
             Node product = getProduct(post);
             results = product.getAllProperties();
             Long price = (Long) results.get(PRICE);
+            results.put(TIME, dateTime);
 
             RelationshipType purchased_on = RelationshipType.withName(PURCHASED_ON +
                     dateTime.format(dateFormatter));
@@ -79,7 +79,7 @@ public class Products {
             purchased.setProperty(TIME, dateTime);
             purchased.setProperty(PRICE, price);
 
-            // I am duplicating data here, an altenative is to create a Purchase node instead
+            // I am duplicating data here, an alternative is to create a Purchase node instead, but then I need 3 relationships + 1 node
             // The first purchased relationship lets me quickly build the commission tree and see new purchases
             // The second purchased relationship lets me know what the user has purchased quickly
             Relationship purchased2 = user.createRelationshipTo(product, RelationshipTypes.PURCHASED);
@@ -88,10 +88,10 @@ public class Products {
 
             Node seller = product.getSingleRelationship(RelationshipTypes.SELLS, Direction.INCOMING).getStartNode();
 
-            Double sellerCommission = Math.floor(price * splitCommission);
+            long sellerCommission = ((Double)Math.floor(price * splitCommission)).longValue();
 
             List<Node> chain = new ArrayList<>();
-            List<Integer> commisions = new ArrayList<>();
+            List<Long> commisions = new ArrayList<>();
 
             while (post.hasRelationship(Direction.OUTGOING, RelationshipTypes.REPOSTED)) {
                 chain.add(getReposter(post));
@@ -101,7 +101,7 @@ public class Products {
             chain = chain.subList(0, Math.min(chain.size(), 4));
 
             for (Double split : splits.get(chain.size())){
-                commisions.add(((Double)Math.floor(price * split)).intValue());
+                commisions.add(((Double)Math.floor(price * split)).longValue());
             }
 
             // Lock the users so nobody else can touch them,
@@ -120,19 +120,17 @@ public class Products {
             Long sellerGold = (Long)seller.getProperty(GOLD);
 
             userGold -= price;
-            sellerGold += sellerCommission.longValue();
+            sellerGold += sellerCommission;
 
             user.setProperty(GOLD, userGold);
             seller.setProperty(GOLD, sellerGold);
 
-            for(int counter = 0; counter <= chain.size(); counter++){
+            for(int counter = 0; counter < chain.size(); counter++){
                 Node marketer = chain.get(counter);
                 Long marketerGold = (Long)marketer.getProperty(GOLD);
                 marketerGold += commisions.get(counter);
                 marketer.setProperty(GOLD, marketerGold);
             }
-
-
         }
         return Stream.of(new MapResult(results));
     }
