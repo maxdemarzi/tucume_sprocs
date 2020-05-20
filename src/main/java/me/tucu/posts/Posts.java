@@ -21,8 +21,7 @@ import static java.lang.Math.abs;
 import static java.util.Collections.reverseOrder;
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.likes.Likes.userLikesPost;
-import static me.tucu.posts.PostExceptions.POST_ALREADY_REPOSTED;
-import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
+import static me.tucu.posts.PostExceptions.*;
 import static me.tucu.schema.DatedRelationshipTypes.POSTED_ON;
 import static me.tucu.schema.DatedRelationshipTypes.REPOSTED_ON;
 import static me.tucu.schema.Properties.*;
@@ -131,7 +130,13 @@ public class Posts {
 
             Tags.createTags(post, parameters, dateTime, tx);
             Mentions.createMentions(post, parameters, dateTime, tx);
-            Promotes.createPromotes(post, parameters, dateTime, tx);
+            // In order to post an advertisement, the user must have already purchased the product (or be the seller).
+            Node product = Promotes.createPromotes(post, parameters, dateTime, tx);
+            if (product != null) {
+                if (!purchasedProduct(user, product) && !sellsProduct(user, product)) {
+                    return Stream.of(PRODUCT_NOT_PURCHASED);
+                }
+            }
             results = post.getAllProperties();
             results.put(USERNAME, parameters.get(USERNAME));
             results.put(NAME, user.getProperty(NAME));
@@ -211,7 +216,13 @@ public class Posts {
 
             Tags.createTags(reply, parameters, dateTime, tx);
             Mentions.createMentions(reply, parameters, dateTime, tx);
-            Promotes.createPromotes(reply, parameters, dateTime, tx);
+            // In order to reply with an advertisement, the user must have already purchased the product (or be the seller).
+            Node product = Promotes.createPromotes(post, parameters, dateTime, tx);
+            if (product != null) {
+                if (!purchasedProduct(user, product) && !sellsProduct(user, product)) {
+                    return Stream.of(PRODUCT_NOT_PURCHASED);
+                }
+            }
             results = reply.getAllProperties();
             results.put(USERNAME, parameters.get(USERNAME));
             results.put(NAME, user.getProperty(NAME));
@@ -285,6 +296,13 @@ public class Posts {
 
                 // Get the actual Post if the post being reposted is a Promoting Post.
                 post = getOriginalPost(post);
+
+                // In order to repost an advertisement, the user must have already purchased the product (or be the seller).
+                Node product = post.getSingleRelationship(RelationshipTypes.PROMOTES, Direction.OUTGOING).getEndNode();
+                if (!purchasedProduct(user, product) && !sellsProduct(user, product)) {
+                    return Stream.of(PRODUCT_NOT_PURCHASED);
+                }
+
             } else {
                 reposted = user.createRelationshipTo(post, reposted_on);
                 reposted.setProperty(TIME, dateTime);
@@ -318,6 +336,25 @@ public class Posts {
             tx.commit();
         }
         return Stream.of(new MapResult(results));
+    }
+
+    private static boolean purchasedProduct(Node user, Node product) {
+        for (Relationship bought : user.getRelationships(Direction.OUTGOING, RelationshipTypes.PURCHASED)) {
+            if (bought.getEndNode().equals(product)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean sellsProduct(Node user, Node product) {
+
+        for (Relationship bought : user.getRelationships(Direction.OUTGOING, RelationshipTypes.SELLS)) {
+            if (bought.getEndNode().equals(product)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isAnAdvertisement(Node post) {

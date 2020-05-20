@@ -9,5 +9,5 @@ public class PostExceptions {
     public static final MapResult MISSING_STATUS = new MapResult(Map.of("Error", "Missing status Parameter."));
     public static final MapResult EMPTY_STATUS = new MapResult(Map.of("Error", "Empty status Parameter."));
     public static final MapResult POST_ALREADY_REPOSTED = new MapResult(Map.of("Error", "Post already reposted."));
-
+    public static final MapResult PRODUCT_NOT_PURCHASED = new MapResult(Map.of("Error", "Product not purchased"));
 }

@@ -33,15 +33,13 @@ public class Products {
     @Context
     public Log log;
 
-    private static final double siteCommission = 0.10;
-    private static final double splitCommission = 0.70;
-    private static final double directCommission = 0.20;
+    private static final double SELLER_COMMISSION_RATE = 0.70;
 
     private static final HashMap<Integer, ArrayList<Double>> splits = new HashMap<>() {{
-        put(1, new ArrayList<>() {{ add(0.20); }});
-        put(2, new ArrayList<>() {{ add(0.14); add(0.06);}});
-        put(3, new ArrayList<>() {{ add(0.14); add(0.042); add(0.018);}});
-        put(4, new ArrayList<>() {{ add(0.14); add(0.029); add(0.022); add(0.009);}});
+        put(1, new ArrayList<>() {{ add(0.20); }});                                     // Author
+        put(2, new ArrayList<>() {{ add(0.14); add(0.06);}});                           // Reposter 1, Author
+        put(3, new ArrayList<>() {{ add(0.14); add(0.042); add(0.018);}});              // Reposter 2, Reposter 1, Author
+        put(4, new ArrayList<>() {{ add(0.14); add(0.029); add(0.022); add(0.009);}});  // Reposter 3, Reposter 2, Reposter 1, Author
     }};
 
     @Procedure(name = "me.tucu.products.purchase", mode = Mode.WRITE)
@@ -88,10 +86,10 @@ public class Products {
 
             Node seller = product.getSingleRelationship(RelationshipTypes.SELLS, Direction.INCOMING).getStartNode();
 
-            long sellerCommission = ((Double)Math.floor(price * splitCommission)).longValue();
+            long sellerCommission = ((Double)Math.floor(price * Products.SELLER_COMMISSION_RATE)).longValue();
 
             List<Node> chain = new ArrayList<>();
-            List<Long> commisions = new ArrayList<>();
+            List<Long> commissions = new ArrayList<>();
 
             while (post.hasRelationship(Direction.OUTGOING, RelationshipTypes.REPOSTED)) {
                 chain.add(getReposter(post));
@@ -101,7 +99,7 @@ public class Products {
             chain = chain.subList(0, Math.min(chain.size(), 4));
 
             for (Double split : splits.get(chain.size())){
-                commisions.add(((Double)Math.floor(price * split)).longValue());
+                commissions.add(((Double)Math.floor(price * split)).longValue());
             }
 
             // Lock the users so nobody else can touch them,
@@ -128,9 +126,10 @@ public class Products {
             for(int counter = 0; counter < chain.size(); counter++){
                 Node marketer = chain.get(counter);
                 Long marketerGold = (Long)marketer.getProperty(GOLD);
-                marketerGold += commisions.get(counter);
+                marketerGold += commissions.get(counter);
                 marketer.setProperty(GOLD, marketerGold);
             }
+            tx.commit();
         }
         return Stream.of(new MapResult(results));
     }
