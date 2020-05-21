@@ -340,12 +340,7 @@ public class CreateUserTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'," +
-                    "silver: 299," +
-                    "gold:0})";
+            me.tucu.fixtures.Users.JEXP ;
 
     private static final HashMap INPUT = new HashMap<String, Object>() {{
         put("username", "maxdemarzi");

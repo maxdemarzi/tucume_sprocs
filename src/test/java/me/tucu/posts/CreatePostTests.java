@@ -1,6 +1,7 @@
 package me.tucu.posts;
 
 import me.tucu.Exceptions;
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -456,34 +457,7 @@ public class CreatePostTests {
     }};
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'," +
-                    "silver: 0," +
-                    "gold: 10}) " +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'," +
-                    "silver: 0," +
-                    "gold: 0}) " +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'," +
-                    "silver: 299," +
-                    "gold: -10}) " +
-                    "CREATE (mark:User {username:'markhneedham', " +
-                    "email: 'mark@neo4j.com', " +
-                    "name: 'Mark Needham'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'jellyfish'," +
-                    "silver: 299," +
-                    "gold: -999})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
                     "CREATE (product:Product {name:'mystuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
                     "CREATE (post1:Post {status:'Hello World!', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +

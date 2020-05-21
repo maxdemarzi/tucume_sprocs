@@ -1,5 +1,6 @@
 package me.tucu.mentions;
 
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Labels;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
@@ -74,19 +75,7 @@ public class CreateMentionsTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "name: 'Michael Hunger'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "time: 1490054400," +
-                    "password: 'tunafish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (post1:Post {status:'Hello @jexp', time: datetime()})" ;
+            Users.MAX + Users.JEXP +
+            "CREATE (post1:Post {status:'Hello @jexp', time: datetime()})" ;
 
 }

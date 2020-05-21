@@ -7,10 +7,14 @@ import org.neo4j.driver.*;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
 
@@ -44,7 +48,10 @@ public class GetProfileTests {
                     parameters("username", "maxdemarzi"));
 
             // Then I should get what I expect
-            assertThat(result.single().get("value").asMap(), equalTo(EXPECTED));
+            Map<String, Object> actual = result.single().get("value").asMap();
+            HashMap<String, Object> modifiable = new HashMap<String, Object>(actual);
+            modifiable.remove(TIME);
+            assertThat(modifiable, is(EXPECTED));
         }
     }
 
@@ -63,7 +70,10 @@ public class GetProfileTests {
                     parameters("username", "maxdemarzi","username2", "jexp"));
 
             // Then I should get what I expect
-            assertThat(result.single().get("value").asMap(), equalTo(EXPECTED2));
+            Map<String, Object> actual = result.single().get("value").asMap();
+            HashMap<String, Object> modifiable = new HashMap<>(actual);
+            modifiable.remove(TIME);
+            assertThat(modifiable, is(EXPECTED2));
         }
     }
 
@@ -82,7 +92,10 @@ public class GetProfileTests {
                     parameters("username", "maxdemarzi","username2", "maxdemarzi"));
 
             // Then I should get what I expect
-            assertThat(result.single().get("value").asMap(), equalTo(EXPECTED));
+            Map<String, Object> actual = result.single().get("value").asMap();
+            HashMap<String, Object> modifiable = new HashMap<String, Object>(actual);
+            modifiable.remove(TIME);
+            assertThat(modifiable, is(EXPECTED));
         }
     }
 
@@ -125,35 +138,12 @@ public class GetProfileTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "password: 'swordfish'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "silver: 299," +
-                    "gold:0})" +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'," +
-                    "silver: 299," +
-                    "gold:0})" +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "password: 'cuddlefish'," +
-                    "silver: 299," +
-                    "gold:0})" +
+         me.tucu.fixtures.Users.MAX + me.tucu.fixtures.Users.JEXP + me.tucu.fixtures.Users.LUKE + me.tucu.fixtures.Users.MARK + me.tucu.fixtures.Users.JERK +
                     "CREATE (stefan:User {username:'darthvader42', " +
                     "email: 'stefan@neo4j.com', " +
                     "name: 'Stefan Armbruster'," +
                     "password: 'catfish'," +
-                    "silver: 299," +
-                    "gold:0})" +
-                    "CREATE (mark:User {username:'markhneedham', " +
-                    "email: 'mark@neo4j.com', " +
-                    "name: 'Mark Needham'," +
-                    "password: 'jellyfish'," +
+                    "time: datetime('2020-04-01T00:01:00.000+0100'), " +
                     "silver: 299," +
                     "gold:0})" +
                     "CREATE (max)-[:FOLLOWS]->(jexp)" +
@@ -196,14 +186,16 @@ public class GetProfileTests {
         put("followers_you_know_count", 2L);
         put("followers_you_know", new ArrayList<HashMap<String, Object>>(){{
             add(new HashMap<>() {{
-                put("name", "Stefan Armbruster");
-                put("username", "darthvader42");
-            }});
-            add(new HashMap<>() {{
                 put("name", "Mark Needham");
                 put("username", "markhneedham");
+                put("hash", "0bd90aeb51d5982062f4f303a62df935");
+                put("time", ZonedDateTime.parse("2020-04-01T00:01+01:00"));
             }});
-
+            add(new HashMap<>() {{
+                put("name", "Stefan Armbruster");
+                put("username", "darthvader42");
+                put("time", ZonedDateTime.parse("2020-04-01T00:01+01:00"));
+            }});
         }});
         put("hash", "0bd90aeb51d5982062f4f303a62df935");
     }};

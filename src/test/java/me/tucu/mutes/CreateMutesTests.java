@@ -1,5 +1,6 @@
 package me.tucu.mutes;
 
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -138,21 +139,7 @@ public class CreateMutesTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'})" +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "name: 'Michael Hunger'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'tunafish'})" +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
                     "CREATE (max)<-[:MUTES {time:datetime() - duration('P7D') }]-(jexp)" +
                     "CREATE (max)<-[:MUTES {time:datetime()  }]-(laeg)";
 

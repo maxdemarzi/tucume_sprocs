@@ -1,6 +1,7 @@
 package me.tucu.posts;
 
 import me.tucu.Exceptions;
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,7 +49,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", INPUT));
+                    parameters("post_id", 6, "parameters", INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -70,7 +71,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", WITH_A_TAG_INPUT));
+                    parameters("post_id", 6, "parameters", WITH_A_TAG_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -92,7 +93,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", WITH_A_MENTION_INPUT));
+                    parameters("post_id", 6, "parameters", WITH_A_MENTION_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -114,7 +115,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", WITH_A_PROMOTES_INPUT));
+                    parameters("post_id", 6, "parameters", WITH_A_PROMOTES_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -232,7 +233,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", USER_IS_BROKE_INPUT));
+                    parameters("post_id", 6, "parameters", USER_IS_BROKE_INPUT));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(Exceptions.INSUFFICIENT_FUNDS.value));
@@ -251,7 +252,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", USER_OWES_GOLD_INPUT));
+                    parameters("post_id", 6, "parameters", USER_OWES_GOLD_INPUT));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(Exceptions.INSUFFICIENT_FUNDS.value));
@@ -365,7 +366,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 5, "parameters", WITH_SILVER_INPUT));
+                    parameters("post_id", 6, "parameters", WITH_SILVER_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -434,7 +435,7 @@ public class CreateReplyTests {
     }};
 
     private static final HashMap USER_IS_BROKE_INPUT = new HashMap<String, Object>() {{
-        put("username", "jexp");
+        put("username", "markhneedham");
         put("status", "Cannot say this because I a broke");
     }};
 
@@ -494,34 +495,7 @@ public class CreateReplyTests {
     }};
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'," +
-                    "silver: 0," +
-                    "gold: 10}) " +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'," +
-                    "silver: 0," +
-                    "gold: -10}) " +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'," +
-                    "silver: 299," +
-                    "gold: -10}) " +
-                    "CREATE (mark:User {username:'markhneedham', " +
-                    "email: 'mark@neo4j.com', " +
-                    "name: 'Mark Needham'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'jellyfish'," +
-                    "silver: 299," +
-                    "gold: -999})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
                     "CREATE (product:Product {name:'mystuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
                     "CREATE (post1:Post {status:'Hello World!', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +

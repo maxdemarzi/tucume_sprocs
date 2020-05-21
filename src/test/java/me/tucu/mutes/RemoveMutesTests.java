@@ -1,5 +1,6 @@
 package me.tucu.mutes;
 
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import static me.tucu.mutes.MuteExceptions.NOT_MUTED;
 import static me.tucu.mutes.MuteExceptions.SELF_UNMUTE;
+import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.neo4j.driver.Values.parameters;
@@ -48,7 +50,10 @@ public class RemoveMutesTests {
                     parameters("username", "jexp","username2", "maxdemarzi"));
 
             // Then I should get what I expect
-            assertThat(result.single().get("value").asMap(), equalTo(EXPECTED.get(2)));
+            Map<String, Object> actual = result.single().get("value").asMap();
+            HashMap<String, Object> modifiable = new HashMap<>(actual);
+            modifiable.remove(TIME);
+            assertThat(modifiable, equalTo(EXPECTED.get(2)));
         }
     }
 
@@ -129,21 +134,7 @@ public class RemoveMutesTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'})" +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "name: 'Michael Hunger'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'tunafish'})" +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
                     "CREATE (max)<-[:MUTES {time:datetime() - duration('P7D') }]-(jexp)" +
                     "CREATE (max)<-[:MUTES {time:datetime()  }]-(laeg)";
 

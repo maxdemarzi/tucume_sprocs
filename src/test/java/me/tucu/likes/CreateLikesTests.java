@@ -1,5 +1,7 @@
 package me.tucu.likes;
 
+import me.tucu.fixtures.Posts;
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -175,40 +177,8 @@ public class CreateLikesTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-            "email: 'max@neo4j.com', " +
-            "name: 'Max De Marzi'," +
-            "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-            "password: 'swordfish'," +
-            "silver: 0," +
-            "gold: 10}) " +
-            "CREATE (jexp:User {username:'jexp', " +
-            "email: 'michael@neo4j.com', " +
-            "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-            "name: 'Michael Hunger'," +
-            "password: 'tunafish'," +
-            "silver: 0," +
-            "gold: 0}) " +
-            "CREATE (laeg:User {username:'laexample', " +
-            "email: 'luke@neo4j.com', " +
-            "name: 'Luke Gannon'," +
-            "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-            "password: 'cuddlefish'," +
-            "silver: 299," +
-            "gold: -10}) " +
-            "CREATE (mark:User {username:'markhneedham', " +
-            "email: 'mark@neo4j.com', " +
-            "name: 'Mark Needham'," +
-            "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-            "password: 'jellyfish'," +
-            "silver: 299," +
-            "gold: -999})" +
-            "CREATE (post1:Post {status:'Hello World!', " +
-            "time: datetime('2020-04-01T12:44:08.556+0100')})" +
-            "CREATE (post2:Post {status:'How are you!', " +
-            "time: datetime('2020-04-12T11:50:35.000+0100')})" +
-            "CREATE (post3:Post {status:'Cannot like me!', " +
-            "time: datetime('2020-04-13T09:21:42.123+0100')})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK +
+            Posts.POST1_0401 + Posts.POST2_0412 + Posts.POST3_0413 +
             "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
             "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.000+0100') }]->(post2)" +
             "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:21:42.123+0100') }]->(post3)" +

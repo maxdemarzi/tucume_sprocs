@@ -1,5 +1,6 @@
 package me.tucu.timeline;
 
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -139,36 +140,7 @@ public class GetTimelineTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "name: 'Michael Hunger'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'tunafish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (mark:User {username:'markhneedham', " +
-                    "email: 'mark@neo4j.com', " +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "name: 'Mark Needham'," +
-                    "password: 'jellyfish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (jerk:User {username:'jerk', " +
-                    "email: 'jerk@neo4j.com', " +
-                    "hash: 'some hash'," +
-                    "name: 'Some Jerk'," +
-                    "password: 'jellyfish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
                     "CREATE (hello:User {username:'hello_there', " +
                     "email: 'hello_there@neo4j.com', " +
                     "hash: 'some hash'," +

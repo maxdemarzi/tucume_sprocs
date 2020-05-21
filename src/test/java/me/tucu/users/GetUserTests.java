@@ -7,6 +7,7 @@ import org.neo4j.driver.*;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -66,21 +67,18 @@ public class GetUserTests {
         }
     }
 
-    private static final HashMap EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
-        put("email", "maxdemarzi@hotmail.com");
+        put("email", "max@neo4j.com");
         put("name", "Max De Marzi");
         put("password", "swordfish");
-        put("silver", 299L);
-        put("gold", 0L);
+        put("hash", "0bd90aeb51d5982062f4f303a62df935");
+        put("time", ZonedDateTime.parse("2020-04-01T00:01+01:00"));
+        put("silver", 0L);
+        put("gold", 10L);
     }};
 
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'maxdemarzi@hotmail.com', " +
-                    "name: 'Max De Marzi'," +
-                    "password: 'swordfish'," +
-                    "silver:299," +
-                    "gold:0})";
+            me.tucu.fixtures.Users.MAX ;
 }

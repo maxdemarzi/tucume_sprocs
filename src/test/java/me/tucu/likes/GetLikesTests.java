@@ -1,5 +1,7 @@
 package me.tucu.likes;
 
+import me.tucu.fixtures.Posts;
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -193,31 +195,14 @@ public class GetLikesTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'})" +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'})" +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'})" +
-                    "CREATE (post1:Post {status:'Hello World!', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
-                    "CREATE (post2:Post {status:'How are you!', " +
-                    "time: datetime('2020-04-12T11:50:35.556+0100')})" +
-                    "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-                    "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
-                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)" +
-                    "CREATE (max)-[:LIKES {time: datetime() - duration('P7D') }]->(post1)" +
-                    "CREATE (max)-[:LIKES {time: datetime() }]->(post2)" +
-                    "CREATE (jexp)-[:LIKES {time: datetime() }]->(post2)" ;
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK +
+            Posts.POST1_0401 + Posts.POST2_0412 + Posts.POST3_0413 +
+            "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
+            "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
+            "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)" +
+            "CREATE (max)-[:LIKES {time: datetime() - duration('P7D') }]->(post1)" +
+            "CREATE (max)-[:LIKES {time: datetime() }]->(post2)" +
+            "CREATE (jexp)-[:LIKES {time: datetime() }]->(post2)" ;
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{

@@ -1,5 +1,6 @@
 package me.tucu.posts;
 
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class CreateRepostTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
-                    parameters("username", "laexample", "post_id", 4));
+                    parameters("username", "laexample", "post_id", 5));
 
             // Then I should get what I expect
             Map<String, Object> record = result.single().get("value").asMap();
@@ -68,7 +69,7 @@ public class CreateRepostTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
-                    parameters("username", "maxdemarzi", "post_id", 8));
+                    parameters("username", "maxdemarzi", "post_id", 9));
 
             // Then I should get what I expect
             // Then I should get what I expect
@@ -111,7 +112,7 @@ public class CreateRepostTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
-                    parameters("username", "jexp", "post_id", 8));
+                    parameters("username", "jexp", "post_id", 9));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(PRODUCT_NOT_PURCHASED.value));
@@ -157,34 +158,7 @@ public class CreateRepostTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'," +
-                    "silver: 0," +
-                    "gold: 10}) " +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'," +
-                    "silver: 0," +
-                    "gold: 0}) " +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'," +
-                    "silver: 299," +
-                    "gold: -10}) " +
-                    "CREATE (mark:User {username:'markhneedham', " +
-                    "email: 'mark@neo4j.com', " +
-                    "name: 'Mark Needham'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'jellyfish'," +
-                    "silver: 299," +
-                    "gold: -999})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
                     "CREATE (post1:Post {status:'Hello World!', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +
                     "CREATE (post2:Post {status:'How are you!', " +

@@ -1,5 +1,6 @@
 package me.tucu.products;
 
+import me.tucu.fixtures.Users;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class PurchaseProductTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.products.purchase($username, $post_id);",
-                    parameters("username", "laexample", "post_id", 7));
+                    parameters("username", "rich", "post_id", 8));
 
             // Then I should get what I expect
             Map<String, Object> record = result.single().get("value").asMap();
@@ -68,7 +69,7 @@ public class PurchaseProductTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.products.purchase($username, $post_id);",
-                    parameters("username", "markneedham", "post_id", 9));
+                    parameters("username", "rich", "post_id", 10));
 
             // Then I should get what I expect
             Map<String, Object> record = result.single().get("value").asMap();
@@ -148,7 +149,7 @@ public class PurchaseProductTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.products.purchase($username, $post_id);",
-                    parameters("username", "jexp", "post_id", 7));
+                    parameters("username", "jexp", "post_id", 8));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(INSUFFICIENT_FUNDS.value));
@@ -156,34 +157,7 @@ public class PurchaseProductTests {
     }
 
     private static final String FIXTURE =
-            "CREATE (max:User {username:'maxdemarzi', " +
-                    "email: 'max@neo4j.com', " +
-                    "name: 'Max De Marzi'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'swordfish'," +
-                    "silver: 0," +
-                    "gold: 10}) " +
-                    "CREATE (jexp:User {username:'jexp', " +
-                    "email: 'michael@neo4j.com', " +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "name: 'Michael Hunger'," +
-                    "password: 'tunafish'," +
-                    "silver: 0," +
-                    "gold: 0}) " +
-                    "CREATE (laeg:User {username:'laexample', " +
-                    "email: 'luke@neo4j.com', " +
-                    "name: 'Luke Gannon'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'cuddlefish'," +
-                    "silver: 299," +
-                    "gold: 1000}) " +
-                    "CREATE (mark:User {username:'markneedham', " +
-                    "email: 'mark@neo4j.com', " +
-                    "name: 'Mark Needham'," +
-                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
-                    "password: 'jellyfish'," +
-                    "silver: 299," +
-                    "gold: 10000})" +
+            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.RICH +
                     "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
                     "CREATE (max)-[:SELLS]->(product)" +
                     "CREATE (post1:Post {status:'Hello World!', " +
