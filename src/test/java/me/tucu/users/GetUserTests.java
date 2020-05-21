@@ -1,5 +1,6 @@
 package me.tucu.users;
 
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -80,5 +81,5 @@ public class GetUserTests {
 
 
     private static final String FIXTURE =
-            me.tucu.fixtures.Users.MAX ;
+            Nodes.MAX ;
 }

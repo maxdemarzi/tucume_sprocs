@@ -1,6 +1,6 @@
 package me.tucu.mentions;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -218,7 +218,7 @@ public class GetMentionsTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
                     "CREATE (post1:Post {status:'Hello @jexp', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})" +
                     "CREATE (post2:Post {status:'Hi @jexp', " +

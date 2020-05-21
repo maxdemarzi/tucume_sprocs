@@ -1,6 +1,7 @@
 package me.tucu.follows;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Relationships;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -136,9 +137,7 @@ public class GetFollowingTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE +
-                    "CREATE (max)-[:FOLLOWS {time:datetime() - duration('P7D') }]->(jexp)" +
-                    "CREATE (max)-[:FOLLOWS {time:datetime()  }]->(laeg)";
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Relationships.MAX_FOLLOWS_JEXP + Relationships.MAX_FOLLOWS_LAEG;
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{

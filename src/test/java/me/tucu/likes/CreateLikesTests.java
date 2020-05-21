@@ -1,7 +1,6 @@
 package me.tucu.likes;
 
-import me.tucu.fixtures.Posts;
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
+import static me.tucu.fixtures.Relationships.MAX_LIKES_POST_1_SILVER;
+import static me.tucu.fixtures.Relationships.MAX_LIKES_POST_2_GOLD;
 import static me.tucu.likes.LikesExceptions.ALREADY_LIKES;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.schema.Properties.LIKED_TIME;
@@ -177,14 +178,14 @@ public class CreateLikesTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK +
-            Posts.POST1_0401 + Posts.POST2_0412 + Posts.POST3_0413 +
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK +
+            Nodes.POST1_0401 + Nodes.POST2_0412 + Nodes.POST3_0413 +
             "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
             "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.000+0100') }]->(post2)" +
             "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:21:42.123+0100') }]->(post3)" +
             "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)" +
-            "CREATE (max)-[:LIKES {time: datetime() - duration('P7D'), silver:true }]->(post1)" +
-            "CREATE (max)-[:LIKES {time: datetime(), gold:true }]->(post2)" +
+            MAX_LIKES_POST_1_SILVER +
+            MAX_LIKES_POST_2_GOLD +
             "CREATE (jexp)-[:LIKES {time: datetime(), silver:true }]->(post2)" ;
 
     private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{

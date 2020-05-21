@@ -1,5 +1,6 @@
 package me.tucu.users;
 
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.fixtures.Nodes.POST1_0401;
+import static me.tucu.fixtures.Nodes.POST2_0412;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -138,24 +141,15 @@ public class GetProfileTests {
     }
 
     private static final String FIXTURE =
-         me.tucu.fixtures.Users.MAX + me.tucu.fixtures.Users.JEXP + me.tucu.fixtures.Users.LUKE + me.tucu.fixtures.Users.MARK + me.tucu.fixtures.Users.JERK +
-                    "CREATE (stefan:User {username:'darthvader42', " +
-                    "email: 'stefan@neo4j.com', " +
-                    "name: 'Stefan Armbruster'," +
-                    "password: 'catfish'," +
-                    "time: datetime('2020-04-01T00:01:00.000+0100'), " +
-                    "silver: 299," +
-                    "gold:0})" +
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK + Nodes.STEFAN +
                     "CREATE (max)-[:FOLLOWS]->(jexp)" +
                     "CREATE (max)-[:FOLLOWS]->(stefan)" +
                     "CREATE (max)-[:FOLLOWS]->(mark)" +
                     "CREATE (max)<-[:FOLLOWS]-(laeg)" +
                     "CREATE (jexp)-[:FOLLOWS]->(stefan)" +
                     "CREATE (jexp)-[:FOLLOWS]->(mark)" +
-                    "CREATE (post1:Post {status:'Hello World!', " +
-                    "time: 1490140299})" +
-                    "CREATE (post2:Post {status:'How are you!', " +
-                    "time: 1490208700})" +
+                 POST1_0401 +
+                 POST2_0412 +
                     "CREATE (post3:Post {status:'Doing fine thanks!', " +
                     "time: 1490290191})" +
                     "CREATE (jexp)-[:POSTED_ON_2017_03_21]->(post1)" +

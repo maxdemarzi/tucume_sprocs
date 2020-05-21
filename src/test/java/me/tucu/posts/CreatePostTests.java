@@ -1,7 +1,7 @@
 package me.tucu.posts;
 
 import me.tucu.Exceptions;
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.Exceptions.INVALID_INPUT;
+import static me.tucu.fixtures.Nodes.*;
+import static me.tucu.fixtures.Relationships.MAX_LIKES_POST_1_SILVER;
+import static me.tucu.fixtures.Relationships.MAX_LIKES_POST_2_GOLD;
 import static me.tucu.posts.PostExceptions.EMPTY_STATUS;
 import static me.tucu.posts.PostExceptions.MISSING_STATUS;
 import static me.tucu.schema.Properties.TIME;
@@ -457,19 +460,17 @@ public class CreatePostTests {
     }};
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
-                    "CREATE (product:Product {name:'mystuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
-                    "CREATE (post1:Post {status:'Hello World!', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
-                    "CREATE (post2:Post {status:'How are you!', " +
-                    "time: datetime('2020-04-12T11:50:35.000+0100')})" +
-                    "CREATE (post3:Post {status:'Cannot like me!', " +
-                    "time: datetime('2020-04-13T09:21:42.123+0100')})" +
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
+                    PRODUCT +
+                    POST1_0401 +
+                    POST2_0412 +
+                    POST3_0413 +
                     "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.000+0100') }]->(post2)" +
                     "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:21:42.123+0100') }]->(post3)" +
                     "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)" +
-                    "CREATE (max)-[:LIKES {time: datetime() - duration('P7D'), silver:true }]->(post1)" +
-                    "CREATE (max)-[:LIKES {time: datetime(), gold:true }]->(post2)" +
+                    "CREATE (max)-[:SELLS]->(product)" +
+                    MAX_LIKES_POST_1_SILVER +
+                    MAX_LIKES_POST_2_GOLD +
                     "CREATE (jexp)-[:LIKES {time: datetime(), silver:true }]->(post2)" ;
 }

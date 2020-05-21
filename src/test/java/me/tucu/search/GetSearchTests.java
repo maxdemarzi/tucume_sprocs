@@ -1,6 +1,6 @@
 package me.tucu.search;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -276,7 +276,7 @@ public class GetSearchTests {
     private static final String INDEX = "CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product'], ['status','username','name'])";
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
                     "CREATE (hello:User {username:'hello_there', " +
                     "email: 'hello_there@neo4j.com', " +
                     "hash: 'some hash'," +

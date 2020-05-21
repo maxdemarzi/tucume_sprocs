@@ -1,6 +1,6 @@
 package me.tucu.promotes;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Labels;
 import me.tucu.schema.RelationshipTypes;
 import me.tucu.schema.Schema;
@@ -15,6 +15,7 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
+import static me.tucu.fixtures.Nodes.PRODUCT;
 import static me.tucu.schema.Properties.STATUS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -137,12 +138,12 @@ public class CreatePromotesTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP +
-                    "CREATE (product:Product {id:'stuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
-                    "CREATE (product2:Product {id:'stuff2', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
-                    "CREATE (post1:Post {status:'Buy my $stuff', time: datetime(), test:1})" +
-                    "CREATE (post2:Post {status:'Buy my $ffuts', time: datetime(), test:2})" +
-                    "CREATE (post3:Post {status:'Buy my $stuff again', time: datetime(), test:3})" +
-                    "CREATE (post4:Post {status:'Buy my $stuff and $stuff2 please', time: datetime(), test:4})" +
+            Nodes.MAX + Nodes.JEXP +
+                    PRODUCT +
+                    "CREATE (product2:Product {id:'mystuff2', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
+                    "CREATE (post1:Post {status:'Buy my $mystuff', time: datetime(), test:1})" +
+                    "CREATE (post2:Post {status:'Buy my $ffutsym', time: datetime(), test:2})" +
+                    "CREATE (post3:Post {status:'Buy my $mystuff again', time: datetime(), test:3})" +
+                    "CREATE (post4:Post {status:'Buy my $mystuff and $mystuff2 please', time: datetime(), test:4})" +
                     "CREATE (post3)-[:PROMOTES]->(product1)";
 }

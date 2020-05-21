@@ -1,6 +1,6 @@
 package me.tucu.mutes;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.fixtures.Relationships.MAX_MUTED_BY_JEXP;
+import static me.tucu.fixtures.Relationships.MAX_MUTED_BY_LAEG;
 import static me.tucu.mutes.MuteExceptions.NOT_MUTED;
 import static me.tucu.mutes.MuteExceptions.SELF_UNMUTE;
 import static me.tucu.schema.Properties.TIME;
@@ -134,9 +136,9 @@ public class RemoveMutesTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.JERK +
-                    "CREATE (max)<-[:MUTES {time:datetime() - duration('P7D') }]-(jexp)" +
-                    "CREATE (max)<-[:MUTES {time:datetime()  }]-(laeg)";
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
+                    MAX_MUTED_BY_JEXP +
+                    MAX_MUTED_BY_LAEG;
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{

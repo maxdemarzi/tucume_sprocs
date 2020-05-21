@@ -1,6 +1,6 @@
 package me.tucu.follows;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_JEXP;
+import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_LAEG;
 import static me.tucu.follows.FollowExceptions.ALREADY_FOLLOW;
 import static me.tucu.follows.FollowExceptions.SELF_FOLLOW;
 import static me.tucu.schema.Properties.TIME;
@@ -139,9 +141,7 @@ public class CreateFollowsTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE +
-                    "CREATE (max)<-[:FOLLOWS {time:datetime() - duration('P7D') }]-(jexp)" +
-                    "CREATE (max)<-[:FOLLOWS {time:datetime()  }]-(laeg)";
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + MAX_FOLLOWED_BY_JEXP + MAX_FOLLOWED_BY_LAEG;
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{

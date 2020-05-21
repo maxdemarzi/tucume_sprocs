@@ -1,6 +1,6 @@
 package me.tucu.products;
 
-import me.tucu.fixtures.Users;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
+import static me.tucu.fixtures.Nodes.*;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.schema.Properties.TIME;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
@@ -157,13 +158,11 @@ public class PurchaseProductTests {
     }
 
     private static final String FIXTURE =
-            Users.MAX + Users.JEXP + Users.LUKE + Users.MARK + Users.RICH +
-                    "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )" +
+            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.RICH +
+                    PRODUCT +
                     "CREATE (max)-[:SELLS]->(product)" +
-                    "CREATE (post1:Post {status:'Hello World!', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
-                    "CREATE (post2:Post {status:'How are you!', " +
-                    "time: datetime('2020-04-12T11:50:35.000+0100')})" +
+                    POST1_0401 +
+                    POST2_0412 +
                     "CREATE (post3:Post {status:'Please buy $mystuff', " +
                     "time: datetime('2020-04-13T09:21:42.123+0100')})" +
                     "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +

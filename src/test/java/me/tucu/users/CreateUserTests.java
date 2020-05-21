@@ -1,6 +1,7 @@
 package me.tucu.users;
 
 import me.tucu.Exceptions;
+import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -340,7 +341,7 @@ public class CreateUserTests {
     }
 
     private static final String FIXTURE =
-            me.tucu.fixtures.Users.JEXP ;
+            Nodes.JEXP ;
 
     private static final HashMap INPUT = new HashMap<String, Object>() {{
         put("username", "maxdemarzi");
