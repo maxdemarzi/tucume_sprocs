@@ -93,7 +93,9 @@ public class Mutes {
                 }
             } else {
                 for (Relationship r1 : user2.getRelationships(Direction.INCOMING, RelationshipTypes.MUTES)) {
-                    muted.add(r1.getStartNode());
+                    if(r1.getStartNode().equals(user)) {
+                        muted.add(user2);
+                    }
                 }
             }
 

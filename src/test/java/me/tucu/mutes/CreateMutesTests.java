@@ -48,7 +48,7 @@ public class CreateMutesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.mutes.create($username, $username2);",
-                    parameters("username", "maxdemarzi","username2", "jexp"));
+                    parameters("username", "markneedham","username2", "jexp"));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
