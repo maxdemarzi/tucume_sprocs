@@ -97,6 +97,7 @@ public class Search {
                             properties.put(LABEL, USER);
 
                             results.add(properties);
+                            continue;
                         }
                     }
 
@@ -105,6 +106,7 @@ public class Search {
                         //todo: Handle Product type
                         properties.put(LABEL, PRODUCT);
                         results.add(properties);
+                        continue;
                     }
 
                     if (node.hasLabel(Labels.Post) && postType) {
@@ -123,6 +125,7 @@ public class Search {
                             }
                             properties.put(LABEL, POST);
                             results.add(properties);
+                            continue;
                         }
                     }
                 }

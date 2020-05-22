@@ -75,7 +75,7 @@ public class CreateMutesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.mutes.create($username, $username2);",
-                    parameters("username", "jexp","username2", "maxdemarzi"));
+                    parameters("username", "maxdemarzi","username2", "jerk"));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(ALREADY_MUTED.value));

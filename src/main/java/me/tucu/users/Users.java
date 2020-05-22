@@ -150,7 +150,9 @@ public class Users {
         long following = user.getDegree(RelationshipTypes.FOLLOWS, Direction.OUTGOING);
         long followers = user.getDegree(RelationshipTypes.FOLLOWS, Direction.INCOMING);
         long likes = user.getDegree(RelationshipTypes.LIKES, Direction.OUTGOING);
-        long posts = user.getDegree(Direction.OUTGOING) - following - likes;
+        long mutes = user.getDegree(RelationshipTypes.MUTES, Direction.OUTGOING);
+        long purchased = user.getDegree(RelationshipTypes.PURCHASED, Direction.OUTGOING);
+        long posts = user.getDegree(Direction.OUTGOING) - following - likes - mutes - purchased;
         results.put("following", following);
         results.put("followers", followers);
         results.put("likes", likes);

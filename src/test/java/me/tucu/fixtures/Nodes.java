@@ -111,6 +111,10 @@ public class Nodes {
             "CREATE (post7:Post {status:'I like #neo4j but I am biased.', " +
             "time: datetime('2020-04-01T12:44:08.556+0100')})";
 
+    public static final String POST8_0401 =
+            "CREATE (post8:Post {status:'Lowercase #hello', " +
+                    "time: datetime('2020-04-01T12:44:08.556+0100')})";
+
     public static final String PRODUCT =
             "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, " +
                     "time: datetime('2020-04-23T01:38:22.000+0100')} )";

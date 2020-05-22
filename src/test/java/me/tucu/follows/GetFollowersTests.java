@@ -142,7 +142,7 @@ public class GetFollowersTests {
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 1L);
             put("following", 1L);
-            put("posts", 3L);
+            put("posts", 2L);
             put("likes", 0L);
         }});
         add(new HashMap<>() {{
@@ -151,7 +151,7 @@ public class GetFollowersTests {
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 1L);
             put("following", 3L);
-            put("posts", 2L);
+            put("posts", 1L);
             put("likes", 1L);
         }});
     }};

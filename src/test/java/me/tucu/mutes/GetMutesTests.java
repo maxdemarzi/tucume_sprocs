@@ -111,7 +111,7 @@ public class GetMutesTests {
                 modifiable.remove(TIME);
                 actual.add(modifiable);
             });
-            assertThat(actual.size(), is(1));
+            assertThat(actual.size(), is(2));
             assertThat(actual.get(0), is(EXPECTED.get(1)));
         }
     }
@@ -142,7 +142,7 @@ public class GetMutesTests {
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 1L);
             put("following", 1L);
-            put("posts", 3L);
+            put("posts", 2L);
             put("likes", 0L);
         }});
         add(new HashMap<>() {{
@@ -151,8 +151,17 @@ public class GetMutesTests {
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 1L);
             put("following", 3L);
-            put("posts", 2L);
+            put("posts", 1L);
             put("likes", 1L);
+        }});
+        add(new HashMap<>() {{
+            put("username", "jerk");
+            put("name", "Some Jerk");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("followers", 0L);
+            put("following", 0L);
+            put("posts", 1L);
+            put("likes", 0L);
         }});
     }};
 }

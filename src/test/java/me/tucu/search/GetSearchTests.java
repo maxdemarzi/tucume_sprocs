@@ -1,5 +1,6 @@
 package me.tucu.search;
 
+import me.tucu.fixtures.Graph;
 import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
@@ -33,7 +34,7 @@ public class GetSearchTests {
                 .withProcedure(Schema.class)
                 .withProcedure(Search.class)
                 .withFixture(INDEX)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -241,7 +242,7 @@ public class GetSearchTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.search.get($term, $type, $limit, $offset, $username);",
-                    parameters("term", "hello", "type", "post", "limit", 3, "offset", 2, "username", "maxdemarzi"));
+                    parameters("term", "hello", "type", "post", "limit", 3, "offset", 1, "username", "maxdemarzi"));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
@@ -316,8 +317,17 @@ public class GetSearchTests {
         }});
         add(new HashMap<>() {{
             put("label", "product");
-            put("id", "product1");
+            put("id", "hello_product");
             put("name", "hello");
+        }});
+        add(new HashMap<>() {{
+            put("label", "post");
+            put("username", "jexp");
+            put("name", "Michael Hunger");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("status", "Hello World!");
+            put("likes", 1L);
+            put("reposts", 1L);
         }});
         add(new HashMap<>() {{
             put("label", "post");
@@ -326,15 +336,6 @@ public class GetSearchTests {
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("status", "Hello @jexp");
             put("likes", 0L);
-            put("reposts", 1L);
-        }});
-        add(new HashMap<>() {{
-            put("label", "post");
-            put("username", "laexample");
-            put("name", "Luke Gannon");
-            put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "Hello world");
-            put("likes", 1L);
             put("reposts", 0L);
         }});
         add(new HashMap<>() {{

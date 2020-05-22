@@ -47,13 +47,13 @@ public class RemoveMutesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.mutes.remove($username, $username2);",
-                    parameters("username", "jexp","username2", "maxdemarzi"));
+                    parameters("username", "maxdemarzi","username2", "jexp"));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
             HashMap<String, Object> modifiable = new HashMap<>(actual);
             modifiable.remove(TIME);
-            assertThat(modifiable, equalTo(EXPECTED.get(2)));
+            assertThat(modifiable, equalTo(EXPECTED.get(1)));
         }
     }
 
