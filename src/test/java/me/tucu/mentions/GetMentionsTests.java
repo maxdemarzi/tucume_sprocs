@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.fixtures.Nodes.POST4_0413;
+import static me.tucu.fixtures.Relationships.LAEG_POSTED_POST_2;
 import static me.tucu.schema.Properties.TIME;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -225,10 +227,9 @@ public class GetMentionsTests {
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
                     "CREATE (post3:Post {status:'Stalking @jexp', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
-                    "CREATE (post4:Post {status:'I think @jexp sucks', " +
-                    "time: datetime('2020-04-14T09:53:23.000+0100')})" +
+                    POST4_0413 +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-                    "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
+                    LAEG_POSTED_POST_2 +
                     "CREATE (mark)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
                     "CREATE (post1)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
                     "CREATE (post2)-[:MENTIONED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(jexp)" +

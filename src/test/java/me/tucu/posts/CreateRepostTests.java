@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.fixtures.Nodes.*;
+import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.PostExceptions.PRODUCT_NOT_PURCHASED;
 import static me.tucu.schema.Properties.TIME;
@@ -164,15 +165,14 @@ public class CreateRepostTests {
                     POST2_0412 +
                     POST3_0413 +
                     PRODUCT +
-                    "CREATE (max)-[:SELLS]->(product)" +
-                    "CREATE (post5:Post {status:'Please buy $mystuff', " +
-                    "time: datetime('2020-05-02T04:33:52.000+0100')})" +
+                    MAX_SELLS_PRODUCT +
+                    POST5_0502 +
                     "CREATE (post5)-[:PROMOTES]->(product)" +
-                    "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-                    "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.000+0100') }]->(post2)" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:21:42.123+0100') }]->(post3)" +
+                    JEXP_POSTED_POST_1 +
+                    LAEG_POSTED_POST_2 +
+                    MAX_POSTED_POST_3 +
                     "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100'), silver:true}]->(post3)" +
-                    "CREATE (jexp)-[:LIKES {time: datetime(), silver:true }]->(post2)" +
+                    JEXP_LIKES_POST_2_SILVER +
                     "CREATE (laeg)-[:POSTED_ON_2020_05_02 {time: datetime('2020-05-02T04:33:52.000+0100') }]->(post5)" ;
 
     private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.schema.Properties.LIKED_TIME;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -197,12 +198,12 @@ public class GetLikesTests {
     private static final String FIXTURE =
             Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK +
             Nodes.POST1_0401 + Nodes.POST2_0412 + Nodes.POST3_0413 +
-            "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-            "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
-            "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)" +
+            JEXP_POSTED_POST_1 +
+            LAEG_POSTED_POST_2+
+            LAEG_REPOSTED_POST_1 +
             Relationships.MAX_LIKES_POST_1_SILVER +
             Relationships.MAX_LIKES_POST_2_GOLD +
-            "CREATE (jexp)-[:LIKES {time: datetime() }]->(post2)" ;
+            JEXP_LIKES_POST_2_SILVER ;
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{

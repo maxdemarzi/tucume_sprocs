@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.tucu.fixtures.Nodes.POST4_0413;
+import static me.tucu.fixtures.Relationships.JERK_POSTED_POST_4;
+import static me.tucu.fixtures.Relationships.MAX_POSTED_POST_3;
 import static me.tucu.schema.Properties.TIME;
 import static me.tucu.tags.TagExceptions.TAG_NOT_FOUND;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
@@ -223,16 +226,15 @@ public class GetTagsTests {
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
                     "CREATE (post3:Post {status:'I dream in #graphs', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
-                    "CREATE (post4:Post {status:'I think #graphs sucks but hello', " +
-                    "time: datetime('2020-04-14T09:53:23.000+0100')})" +
+                    POST4_0413 +
                     "CREATE (neo4j:Tag {name:'neo4j', " +
                     "time: datetime('2020-04-01T11:44:08.556+0100')})" +
                     "CREATE (graphs:Tag {name:'graphs', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
                     "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
                     "CREATE (max)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(post3)" +
-                    "CREATE (jerk)-[:POSTED_ON_2020_04_14 {time: datetime('2020-04-14T09:53:23.000+0100') }]->(post4)" +
+                    MAX_POSTED_POST_3 +
+                    JERK_POSTED_POST_4 +
                     "CREATE (post1)-[:TAGGED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(neo4j)" +
                     "CREATE (post2)-[:TAGGED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(neo4j)" +
                     "CREATE (post3)-[:TAGGED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(graphs)" +

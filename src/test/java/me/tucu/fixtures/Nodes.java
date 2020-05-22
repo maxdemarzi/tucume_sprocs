@@ -71,16 +71,35 @@ public class Nodes {
                     "silver: 299," +
                     "gold:0})";
 
+    public static final String HELLO_USER =
+            "CREATE (hello:User {username:'hello_there', " +
+                    "email: 'hello_there@neo4j.com', " +
+                    "hash: 'some hash'," +
+                    "name: 'hello there user'," +
+                    "password: 'bluefish'," +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })";
+
     public static final String POST1_0401 =
-               "CREATE (post1:Post {status:'Hello World!', " +
-                       "time: datetime('2020-04-01T12:44:08.556+0100')})" ;
+           "CREATE (post1:Post {status:'Hello World!', " +
+                   "time: datetime('2020-04-01T12:44:08.556+0100')})" ;
+
     public static final String POST2_0412 =
-                       "CREATE (post2:Post {status:'How are you!', " +
-                       "time: datetime('2020-04-12T11:50:35.000+0100')})";
+           "CREATE (post2:Post {status:'How are you!', " +
+                   "time: datetime('2020-04-12T11:50:35.000+0100')})";
+
     public static final String POST3_0413 =
-                       "CREATE (post3:Post {status:'Cannot like me!', " +
-                       "time: datetime('2020-04-13T09:21:42.123+0100')})" ;
+           "CREATE (post3:Post {status:'Cannot like me!', " +
+                   "time: datetime('2020-04-13T09:21:42.123+0100')})" ;
+
+    public static final String POST4_0413 =
+            "CREATE (post4:Post {status:'I think @jexp sucks but hello', " +
+                    "time: datetime('2020-04-14T09:53:23.000+0100')})";
+
+    public static final String POST5_0502 =
+            "CREATE (post5:Post {status:'Please buy $mystuff', " +
+                    "time: datetime('2020-05-02T04:33:52.000+0100')})";
 
     public static final String PRODUCT =
-            "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, time: datetime('2020-04-23T01:38:22.000+0100')} )";
+            "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, " +
+                    "time: datetime('2020-04-23T01:38:22.000+0100')} )";
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
 import static me.tucu.fixtures.Nodes.*;
+import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.schema.Properties.TIME;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
@@ -160,18 +161,17 @@ public class PurchaseProductTests {
     private static final String FIXTURE =
             Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.RICH +
                     PRODUCT +
-                    "CREATE (max)-[:SELLS]->(product)" +
+                    MAX_SELLS_PRODUCT +
                     POST1_0401 +
                     POST2_0412 +
-                    "CREATE (post3:Post {status:'Please buy $mystuff', " +
-                    "time: datetime('2020-04-13T09:21:42.123+0100')})" +
-                    "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-                    "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.000+0100') }]->(post2)" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:21:42.123+0100') }]->(post3)" +
-                    "CREATE (post3)-[:PROMOTES]->(product)" +
+                    POST5_0502 +
+                    JEXP_POSTED_POST_1 +
+                    LAEG_POSTED_POST_2 +
+                    MAX_POSTED_POST_5 +
+                    "CREATE (post5)-[:PROMOTES]->(product)" +
                     "CREATE (repost1:Post {post_id: 7, username:'laexample', time: datetime('2020-04-12T12:33:00.556+0100')})" +
                     "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 { time: datetime('2020-04-12T12:33:00.556+0100') }]->(repost1)" +
-                    "CREATE (repost1)-[:REPOSTED]->(post3)" +
+                    "CREATE (repost1)-[:REPOSTED]->(post5)" +
                     "CREATE (repost2:Post {post_id: 7, username:'jexp', time: datetime('2020-04-12T14:49:00.556+0100')})" +
                     "CREATE (jexp)-[:REPOSTED_ON_2020_04_12 { time: datetime('2020-04-12T14:49:00.556+0100') }]->(repost2)" +
                     "CREATE (repost2)-[:REPOSTED]->(repost1)";

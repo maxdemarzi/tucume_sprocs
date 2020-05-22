@@ -11,8 +11,7 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Relationships.MAX_LIKES_POST_1_SILVER;
-import static me.tucu.fixtures.Relationships.MAX_LIKES_POST_2_GOLD;
+import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.likes.LikesExceptions.NOT_LIKING;
 import static me.tucu.likes.LikesExceptions.UNLIKE_TIMEOUT;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
@@ -160,13 +159,13 @@ public class RemoveLikesTests {
     private static final String FIXTURE =
             Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK +
             Nodes.POST1_0401 + Nodes.POST2_0412 + Nodes.POST3_0413 +
-            "CREATE (jexp)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-            "CREATE (laeg)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.000+0100') }]->(post2)" +
-            "CREATE (max)-[:POSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:21:42.123+0100') }]->(post3)" +
-            "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)" +
+            JEXP_POSTED_POST_1 +
+            LAEG_POSTED_POST_2 +
+            MAX_POSTED_POST_3 +
+            LAEG_REPOSTED_POST_1 +
             MAX_LIKES_POST_1_SILVER +
             MAX_LIKES_POST_2_GOLD +
-            "CREATE (jexp)-[:LIKES {time: datetime(), silver:true }]->(post2)" ;
+            JEXP_LIKES_POST_2_SILVER ;
 
     private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
         put("username", "laexample");
