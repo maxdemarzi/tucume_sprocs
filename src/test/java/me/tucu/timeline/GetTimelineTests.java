@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Nodes.POST4_0413;
+import static me.tucu.fixtures.Nodes.*;
 import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.schema.Properties.REPOSTED_TIME;
 import static me.tucu.schema.Properties.TIME;
@@ -143,25 +143,22 @@ public class GetTimelineTests {
 
     private static final String FIXTURE =
             Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
-                    "CREATE (post1:Post {status:'Hello @jexp', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
+                    POST6_0401 +
                     "CREATE (post2:Post {status:'Hello world', " +
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
                     "CREATE (post3:Post {status:'Lowercase #hello', " +
                     "time: datetime('2020-04-13T04:20:12.000+0100')})" +
                     POST4_0413 +
-                    "CREATE (tag:Tag {name:'hello', " +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (hello_product:Product {id:'hello_product', name:'hello', " +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
+                    HELLO_TAG +
+                    HELLO_PRODUCT +
+                    "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post6)" +
                     LAEG_POSTED_POST_2 +
                     MAX_POSTED_POST_3 +
                     JERK_POSTED_POST_4 +
-                    "CREATE (post1)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
+                    "CREATE (post6)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
                     "CREATE (post2)-[:MENTIONED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(jexp)" +
                     "CREATE (post3)-[:MENTIONED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(jexp)" +
-                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post1)" +
+                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post6)" +
                     "CREATE (max)-[:LIKES {time: datetime('2020-04-12T11:55:00.000+0100') }]->(post2)" +
                     "CREATE (jexp)-[:FOLLOWS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(max)" +
                     "CREATE (jexp)-[:FOLLOWS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(laeg)" +

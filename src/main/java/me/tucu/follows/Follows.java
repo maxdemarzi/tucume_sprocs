@@ -124,7 +124,9 @@ public class Follows {
                 }
             } else {
                 for (Relationship r1 : user2.getRelationships(Direction.INCOMING, RelationshipTypes.FOLLOWS)) {
-                    followed.add(r1.getStartNode());
+                    if(r1.getStartNode().equals(user)) {
+                        followed.add(user2);
+                    }
                 }
             }
 

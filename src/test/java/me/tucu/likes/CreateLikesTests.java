@@ -169,7 +169,7 @@ public class CreateLikesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.likes.create($username, $post_id);",
-                    parameters("username", "markhneedham", "post_id", 6));
+                    parameters("username", "markneedham", "post_id", 6));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(INSUFFICIENT_FUNDS.value));

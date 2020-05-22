@@ -1,6 +1,6 @@
 package me.tucu.users;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class GetUserTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Users.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -79,7 +79,4 @@ public class GetUserTests {
         put("gold", 10L);
     }};
 
-
-    private static final String FIXTURE =
-            Nodes.MAX ;
 }

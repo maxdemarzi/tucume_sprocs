@@ -1,7 +1,7 @@
 package me.tucu.users;
 
 import me.tucu.Exceptions;
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ public class CreateUserTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Users.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -48,7 +48,7 @@ public class CreateUserTests {
                     parameters("parameters", INPUT));
 
             // Then I should get what I expect
-            Map actual = result.single().get("value").asMap();
+            Map<String, Object> actual = result.single().get("value").asMap();
             HashMap<String, Object> modifiable = new HashMap<String, Object>(actual);
             modifiable.remove(TIME);
             assertThat(modifiable, is(EXPECTED));
@@ -340,101 +340,97 @@ public class CreateUserTests {
         }
     }
 
-    private static final String FIXTURE =
-            Nodes.JEXP ;
-
-    private static final HashMap INPUT = new HashMap<String, Object>() {{
-        put("username", "maxdemarzi");
-        put("email", "maxdemarzi@hotmail.com");
+    private static final HashMap<String, Object> INPUT = new HashMap<>() {{
+        put("username", "new_user");
+        put("email", "new_user@hotmail.com");
         put("name", "Max De Marzi");
         put("password", "swordfish");
     }};
 
-    private static final HashMap MISSINGUSERNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> MISSINGUSERNAMEINPUT = new HashMap<>() {{
         put("not_username", "maxdemarzi");
     }};
 
-    private static final HashMap EMPTYUSERNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EMPTYUSERNAMEINPUT = new HashMap<>() {{
         put("username", "");
     }};
 
-    private static final HashMap INVALIDUSERNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> INVALIDUSERNAMEINPUT = new HashMap<>() {{
         put("username", " has spaces ");
     }};
 
-
-    private static final HashMap MISSINGEMAILINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> MISSINGEMAILINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("not_email", "maxdemarzi@hotmail.com");
     }};
 
-    private static final HashMap EMPTYEMAILINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EMPTYEMAILINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "");
     }};
 
-    private static final HashMap INVALIDEMAILINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> INVALIDEMAILINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "not an email address");
     }};
 
-    private static final HashMap MISSINGNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> MISSINGNAMEINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "maxdemarzi@hotmail.com");
     }};
 
-    private static final HashMap EMPTYNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EMPTYNAMEINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "maxdemarzi@hotmail.com");
         put("name", "");
     }};
 
-    private static final HashMap INVALIDNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> INVALIDNAMEINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "maxdemarzi@hotmail.com");
         put("name", "asdfafdasfafasdfasdfasfasfasfasdfasfdasdfasdfasdfasfasdfasdfasfafadfasdfasfafasdfasdfasdfdasfasdfadsfasdfasfasdfasdf");
     }};
 
-    private static final HashMap MISSINGPASSWORDINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> MISSINGPASSWORDINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "maxdemarzi@hotmail.com");
         put("name", "Max De Marzi");
     }};
 
-    private static final HashMap EMPTYPASSWORDINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EMPTYPASSWORDINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "maxdemarzi@hotmail.com");
         put("name", "Max De Marzi");
         put("password", "");
     }};
 
-    private static final HashMap INVALIDPASSWORDINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> INVALIDPASSWORDINPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("email", "maxdemarzi@hotmail.com");
         put("name", "Max De Marzi");
         put("password", "123");
     }};
 
-    private static final HashMap EXISTINGUSERNAMEINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EXISTINGUSERNAMEINPUT = new HashMap<>() {{
         put("username", "jexp");
         put("email", "michael@hotmail.com");
         put("name", "Michael Hunger");
         put("password", "password");
     }};
 
-    private static final HashMap EXISTINGEMAILINPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EXISTINGEMAILINPUT = new HashMap<>() {{
         put("username", "jexp2");
         put("email", "michael@neo4j.com");
         put("name", "Michael Hunger");
         put("password", "password");
     }};
 
-    private static final HashMap EXPECTED = new HashMap<String, Object>() {{
-        put("username", "maxdemarzi");
-        put("email", "maxdemarzi@hotmail.com");
+    private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
+        put("username", "new_user");
+        put("email", "new_user@hotmail.com");
         put("name", "Max De Marzi");
         put("password", "swordfish");
-        put("hash","58750f2179edbd650b471280aa66fee5");
+        put("hash", "3843e8863d8f988fb82b106262ce1587");
         put("silver", 299L);
         put("gold", 0L);
     }};

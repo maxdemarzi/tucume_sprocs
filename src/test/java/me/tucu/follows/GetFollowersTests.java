@@ -1,6 +1,6 @@
 package me.tucu.follows;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_JEXP;
-import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_LAEG;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,7 +31,7 @@ public class GetFollowersTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Follows.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -137,27 +135,24 @@ public class GetFollowersTests {
         }
     }
 
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + MAX_FOLLOWED_BY_JEXP + MAX_FOLLOWED_BY_LAEG;;
-
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
             put("username", "laexample");
             put("name", "Luke Gannon");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("followers", 0L);
+            put("followers", 1L);
             put("following", 1L);
-            put("posts", 0L);
+            put("posts", 3L);
             put("likes", 0L);
         }});
         add(new HashMap<>() {{
             put("username", "jexp");
             put("name", "Michael Hunger");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("followers", 0L);
-            put("following", 1L);
-            put("posts", 0L);
-            put("likes", 0L);
+            put("followers", 1L);
+            put("following", 3L);
+            put("posts", 2L);
+            put("likes", 1L);
         }});
     }};
 }

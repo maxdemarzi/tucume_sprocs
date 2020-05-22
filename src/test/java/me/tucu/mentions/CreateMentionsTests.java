@@ -12,6 +12,7 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
+import static me.tucu.fixtures.Nodes.POST6_0401;
 import static me.tucu.schema.DatedRelationshipTypes.MENTIONED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.utils.Time.dateFormatter;
@@ -71,11 +72,10 @@ public class CreateMentionsTests {
                 }
             }
         }
-
     }
 
     private static final String FIXTURE =
             Nodes.MAX + Nodes.JEXP +
-            "CREATE (post1:Post {status:'Hello @jexp', time: datetime()})" ;
+            POST6_0401 ;
 
 }

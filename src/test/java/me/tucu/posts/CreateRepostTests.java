@@ -167,7 +167,7 @@ public class CreateRepostTests {
                     PRODUCT +
                     MAX_SELLS_PRODUCT +
                     POST5_0502 +
-                    "CREATE (post5)-[:PROMOTES]->(product)" +
+                    POST_5_PROMOTES_PRODUCT +
                     JEXP_POSTED_POST_1 +
                     LAEG_POSTED_POST_2 +
                     MAX_POSTED_POST_3 +

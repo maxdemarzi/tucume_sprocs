@@ -1,7 +1,6 @@
 package me.tucu.follows;
 
-import me.tucu.fixtures.Nodes;
-import me.tucu.fixtures.Relationships;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +31,7 @@ public class GetFollowingTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Follows.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -113,7 +112,7 @@ public class GetFollowingTests {
                 actual.add(modifiable);
             });
             assertThat(actual.size(), is(1));
-            assertThat(actual.get(0), is(EXPECTED.get(1)));
+            assertThat(actual.get(0), is(EXPECTED.get(3)));
         }
     }
 
@@ -136,15 +135,30 @@ public class GetFollowingTests {
         }
     }
 
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Relationships.MAX_FOLLOWS_JEXP + Relationships.MAX_FOLLOWS_LAEG;
-
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
+        add(new HashMap<>() {{
+            put("username", "darthvader42");
+            put("name", "Stefan Armbruster");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("followers", 2L);
+            put("following", 0L);
+            put("posts", 0L);
+            put("likes", 0L);
+        }});
         add(new HashMap<>() {{
             put("username", "laexample");
             put("name", "Luke Gannon");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 1L);
+            put("following", 1L);
+            put("posts", 3L);
+            put("likes", 0L);
+        }});
+        add(new HashMap<>() {{
+            put("username", "markneedham");
+            put("name", "Mark Needham");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("followers", 2L);
             put("following", 0L);
             put("posts", 0L);
             put("likes", 0L);
@@ -154,9 +168,9 @@ public class GetFollowingTests {
             put("name", "Michael Hunger");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 1L);
-            put("following", 0L);
-            put("posts", 0L);
-            put("likes", 0L);
+            put("following", 3L);
+            put("posts", 2L);
+            put("likes", 1L);
         }});
     }};
 }

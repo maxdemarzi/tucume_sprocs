@@ -168,7 +168,7 @@ public class PurchaseProductTests {
                     JEXP_POSTED_POST_1 +
                     LAEG_POSTED_POST_2 +
                     MAX_POSTED_POST_5 +
-                    "CREATE (post5)-[:PROMOTES]->(product)" +
+                    POST_5_PROMOTES_PRODUCT +
                     "CREATE (repost1:Post {post_id: 7, username:'laexample', time: datetime('2020-04-12T12:33:00.556+0100')})" +
                     "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 { time: datetime('2020-04-12T12:33:00.556+0100') }]->(repost1)" +
                     "CREATE (repost1)-[:REPOSTED]->(post5)" +

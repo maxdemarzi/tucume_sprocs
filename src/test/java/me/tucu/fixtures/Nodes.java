@@ -33,7 +33,7 @@ public class Nodes {
                     "gold: -10}) ";
 
     public static final String MARK =
-            "CREATE (mark:User {username:'markhneedham', " +
+            "CREATE (mark:User {username:'markneedham', " +
                     "email: 'mark@neo4j.com', " +
                     "name: 'Mark Needham'," +
                     "hash: '0bd90aeb51d5982062f4f303a62df935'," +
@@ -47,6 +47,7 @@ public class Nodes {
                     "email: 'jerk@neo4j.com', " +
                     "hash: 'some hash'," +
                     "name: 'Some Jerk'," +
+                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'catfish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100'), " +
                     "silver: 0," +
@@ -57,6 +58,7 @@ public class Nodes {
                     "email: 'rich@neo4j.com', " +
                     "hash: 'some hash'," +
                     "name: 'Rich Person'," +
+                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'arowana'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100'), " +
                     "silver: 0," +
@@ -66,6 +68,7 @@ public class Nodes {
             "CREATE (stefan:User {username:'darthvader42', " +
                     "email: 'stefan@neo4j.com', " +
                     "name: 'Stefan Armbruster'," +
+                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'catfish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100'), " +
                     "silver: 299," +
@@ -76,6 +79,7 @@ public class Nodes {
                     "email: 'hello_there@neo4j.com', " +
                     "hash: 'some hash'," +
                     "name: 'hello there user'," +
+                    "hash: '0bd90aeb51d5982062f4f303a62df935'," +
                     "password: 'bluefish'," +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })";
 
@@ -99,7 +103,20 @@ public class Nodes {
             "CREATE (post5:Post {status:'Please buy $mystuff', " +
                     "time: datetime('2020-05-02T04:33:52.000+0100')})";
 
+    public static final String POST6_0401 =
+            "CREATE (post6:Post {status:'Hello @jexp', " +
+                    "time: datetime('2020-04-01T12:44:08.556+0100')})";
+
     public static final String PRODUCT =
             "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, " +
                     "time: datetime('2020-04-23T01:38:22.000+0100')} )";
+
+    public static final String HELLO_PRODUCT =
+            "CREATE (hello_product:Product {id:'hello_product', name:'hello', " +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })" ;
+
+    public static final String HELLO_TAG =
+            "CREATE (tag:Tag {name:'hello', " +
+                    "time: datetime('2020-04-01T00:01:00.000+0100') })";
+
 }

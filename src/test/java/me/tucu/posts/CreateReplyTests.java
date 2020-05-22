@@ -404,7 +404,7 @@ public class CreateReplyTests {
     }};
 
     private static final HashMap<String, Object> USER_OWES_GOLD_INPUT = new HashMap<>() {{
-        put("username", "markhneedham");
+        put("username", "markneedham");
         put("status", "Just saying something");
     }};
 
@@ -437,7 +437,7 @@ public class CreateReplyTests {
     }};
 
     private static final HashMap<String, Object> USER_IS_BROKE_INPUT = new HashMap<>() {{
-        put("username", "markhneedham");
+        put("username", "markneedham");
         put("status", "Cannot say this because I a broke");
     }};
 

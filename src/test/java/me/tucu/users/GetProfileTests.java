@@ -1,6 +1,6 @@
 package me.tucu.users;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Nodes.POST1_0401;
-import static me.tucu.fixtures.Nodes.POST2_0412;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -32,7 +30,7 @@ public class GetProfileTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Users.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -140,54 +138,37 @@ public class GetProfileTests {
         }
     }
 
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK + Nodes.STEFAN +
-                    "CREATE (max)-[:FOLLOWS]->(jexp)" +
-                    "CREATE (max)-[:FOLLOWS]->(stefan)" +
-                    "CREATE (max)-[:FOLLOWS]->(mark)" +
-                    "CREATE (max)<-[:FOLLOWS]-(laeg)" +
-                    "CREATE (jexp)-[:FOLLOWS]->(stefan)" +
-                    "CREATE (jexp)-[:FOLLOWS]->(mark)" +
-                 POST1_0401 +
-                 POST2_0412 +
-                    "CREATE (post3:Post {status:'Doing fine thanks!', " +
-                    "time: 1490290191})" +
-                    "CREATE (jexp)-[:POSTED_ON_2017_03_21]->(post1)" +
-                    "CREATE (max)-[:POSTED_ON_2017_03_22]->(post2)" +
-                    "CREATE (max)-[:POSTED_ON_2017_03_23]->(post3)" +
-                    "CREATE (max)-[:LIKES]->(post1)" +
-                    "CREATE (laeg)-[:REPOSTED_ON_2017_03_22]->(post1)";
-
-    private static final HashMap EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("name", "Max De Marzi");
-        put("posts", 2L);
-        put("likes", 1L);
-        put("followers", 1L);
-        put("following", 3L);
+        put("posts", 5L);
+        put("likes", 2L);
+        put("followers", 2L);
+        put("following", 4L);
         put("hash", "0bd90aeb51d5982062f4f303a62df935");
     }};
 
-    private static final HashMap EXPECTED2 = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EXPECTED2 = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("name", "Max De Marzi");
-        put("posts", 2L);
-        put("likes", 1L);
-        put("followers", 1L);
-        put("following", 3L);
-        put("i_follow", false);
+        put("posts", 5L);
+        put("likes", 2L);
+        put("followers", 2L);
+        put("following", 4L);
+        put("i_follow", true);
         put("follows_me", true);
         put("followers_you_know_count", 2L);
         put("followers_you_know", new ArrayList<HashMap<String, Object>>(){{
             add(new HashMap<>() {{
                 put("name", "Mark Needham");
-                put("username", "markhneedham");
+                put("username", "markneedham");
                 put("hash", "0bd90aeb51d5982062f4f303a62df935");
                 put("time", ZonedDateTime.parse("2020-04-01T00:01+01:00"));
             }});
             add(new HashMap<>() {{
                 put("name", "Stefan Armbruster");
                 put("username", "darthvader42");
+                put("hash", "0bd90aeb51d5982062f4f303a62df935");
                 put("time", ZonedDateTime.parse("2020-04-01T00:01+01:00"));
             }});
         }});

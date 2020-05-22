@@ -1,5 +1,6 @@
 package me.tucu.follows;
 
+import me.tucu.fixtures.Graph;
 import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
@@ -33,7 +34,7 @@ public class RemoveFollowsTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Follows.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -72,7 +73,7 @@ public class RemoveFollowsTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.follows.remove($username, $username2);",
-                    parameters("username", "maxdemarzi","username2", "jexp"));
+                    parameters("username", "laexample","username2", "jexp"));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(NOT_FOLLOWING.value));
@@ -134,10 +135,7 @@ public class RemoveFollowsTests {
             assertThat(result.single().get("value").asMap(), equalTo(SELF_UNFOLLOW.value));
         }
     }
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + MAX_FOLLOWED_BY_JEXP + MAX_FOLLOWED_BY_LAEG;;
-
+    
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
             put("username", "laexample");

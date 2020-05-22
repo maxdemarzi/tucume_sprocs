@@ -340,75 +340,75 @@ public class CreatePostTests {
         }
     }
 
-    private static final HashMap INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> INPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just saying something");
     }};
 
-    private static final HashMap WITH_A_TAG_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_A_TAG_INPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just saying #something");
     }};
 
-    private static final HashMap WITH_A_MENTION_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_A_MENTION_INPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just saying something to @jexp");
     }};
 
-    private static final HashMap WITH_A_PROMOTES_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_A_PROMOTES_INPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just telling you to buy $mystuff");
     }};
 
-    private static final HashMap WITH_SILVER_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_SILVER_INPUT = new HashMap<>() {{
         put("username", "laexample");
         put("status", "Just saying something");
     }};
 
-    private static final HashMap USER_OWES_GOLD_INPUT = new HashMap<String, Object>() {{
-        put("username", "markhneedham");
+    private static final HashMap<String, Object> USER_OWES_GOLD_INPUT = new HashMap<>() {{
+        put("username", "markneedham");
         put("status", "Just saying something");
     }};
 
-    private static final HashMap EMPTY_STATUS_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EMPTY_STATUS_INPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "");
     }};
 
-    private static final HashMap MISSING_USERNAME_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> MISSING_USERNAME_INPUT = new HashMap<>() {{
         put("status", "some status");
     }};
 
-    private static final HashMap BLANK_USERNAME_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> BLANK_USERNAME_INPUT = new HashMap<>() {{
         put("username", "");
         put("status", "some status");
     }};
 
-    private static final HashMap INVALID_USERNAME_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> INVALID_USERNAME_INPUT = new HashMap<>() {{
         put("username", "1");
         put("status", "some status");
     }};
 
-    private static final HashMap EMPTY_INPUT = new HashMap<String, Object>() {{ }};
+    private static final HashMap<String, Object> EMPTY_INPUT = new HashMap<>() {{ }};
 
-    private static final HashMap NULL_INPUT = null;
+    private static final HashMap<String, Object> NULL_INPUT = null;
 
-    private static final HashMap USER_NOT_THERE_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> USER_NOT_THERE_INPUT = new HashMap<>() {{
         put("username", "not_there");
         put("status", "Just saying something");
     }};
 
-    private static final HashMap USER_IS_BROKE_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> USER_IS_BROKE_INPUT = new HashMap<>() {{
         put("username", "jexp");
         put("status", "Cannot say this because I a broke");
     }};
 
-    private static final HashMap NO_STATUS_INPUT = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> NO_STATUS_INPUT = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("not_status", "Just saying something");
     }};
 
-    private static final HashMap EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just saying something");
         put("name", "Max De Marzi");
@@ -418,7 +418,7 @@ public class CreatePostTests {
         put("gold", true);
     }};
 
-    private static final HashMap WITH_A_TAG_EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_A_TAG_EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just saying #something");
         put("name", "Max De Marzi");
@@ -428,7 +428,7 @@ public class CreatePostTests {
         put("gold", true);
     }};
 
-    private static final HashMap WITH_A_MENTION_EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_A_MENTION_EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just saying something to @jexp");
         put("name", "Max De Marzi");
@@ -438,7 +438,7 @@ public class CreatePostTests {
         put("gold", true);
     }};
 
-    private static final HashMap WITH_A_PROMOTES_EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_A_PROMOTES_EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("status", "Just telling you to buy $mystuff");
         put("name", "Max De Marzi");
@@ -448,7 +448,7 @@ public class CreatePostTests {
         put("gold", true);
     }};
 
-    private static final HashMap WITH_SILVER_EXPECTED = new HashMap<String, Object>() {{
+    private static final HashMap<String, Object> WITH_SILVER_EXPECTED = new HashMap<>() {{
         put("username", "laexample");
         put("status", "Just saying something");
         put("name", "Luke Gannon");

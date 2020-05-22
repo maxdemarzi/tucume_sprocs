@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.fixtures.Nodes.POST4_0413;
+import static me.tucu.fixtures.Nodes.POST6_0401;
 import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -279,8 +280,7 @@ public class GetSearchTests {
 
     private static final String FIXTURE =
             Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK + Nodes.HELLO_USER +
-                    "CREATE (post1:Post {status:'Hello @jexp', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
+                    POST6_0401 +
                     "CREATE (post2:Post {status:'Hello world', " +
                     "time: datetime('2020-04-12T11:50:35.556+0100')})" +
                     "CREATE (post3:Post {status:'Lowercase #hello', " +
@@ -290,14 +290,14 @@ public class GetSearchTests {
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
                     "CREATE (product:Product {id:'product1', name:'hello', " +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
+                    "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post6)" +
                     LAEG_POSTED_POST_2 +
                     MAX_POSTED_POST_3 +
                     JERK_POSTED_POST_4 +
-                    "CREATE (post1)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
+                    "CREATE (post6)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
                     "CREATE (post2)-[:MENTIONED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(jexp)" +
                     "CREATE (post3)-[:MENTIONED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(jexp)" +
-                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post1)" +
+                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post6)" +
                     "CREATE (max)-[:LIKES {time: datetime('2020-04-12T11:55:00.000+0100') }]->(post2)" +
                     "CREATE (jexp)-[:FOLLOWS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(max)" +
                     "CREATE (max)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" ;
@@ -307,7 +307,7 @@ public class GetSearchTests {
             put("label", "user");
             put("username", "hello_there");
             put("name", "hello there user");
-            put("hash", "some hash");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("followers", 0L);
             put("following", 0L);
             put("posts", 0L);
@@ -350,7 +350,7 @@ public class GetSearchTests {
             put("label", "post");
             put("username", "jerk");
             put("name", "Some Jerk");
-            put("hash", "some hash");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
             put("status", "I think @jexp sucks but hello");
             put("likes", 0L);
             put("reposts", 0L);

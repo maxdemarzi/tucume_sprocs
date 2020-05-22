@@ -1,6 +1,6 @@
 package me.tucu.follows;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_JEXP;
-import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_LAEG;
 import static me.tucu.follows.FollowExceptions.ALREADY_FOLLOW;
 import static me.tucu.follows.FollowExceptions.SELF_FOLLOW;
 import static me.tucu.schema.Properties.TIME;
@@ -34,7 +32,7 @@ public class CreateFollowsTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Follows.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -50,7 +48,7 @@ public class CreateFollowsTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.follows.create($username, $username2);",
-                    parameters("username", "maxdemarzi","username2", "jexp"));
+                    parameters("username", "laexample","username2", "jexp"));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
@@ -83,6 +81,7 @@ public class CreateFollowsTests {
             assertThat(result.single().get("value").asMap(), equalTo(ALREADY_FOLLOW.value));
         }
     }
+
     @Test
     void shouldNotCreateFollowsNotFound()
     {
@@ -139,9 +138,6 @@ public class CreateFollowsTests {
             assertThat(result.single().get("value").asMap(), equalTo(SELF_FOLLOW.value));
         }
     }
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + MAX_FOLLOWED_BY_JEXP + MAX_FOLLOWED_BY_LAEG;
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
