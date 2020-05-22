@@ -1,6 +1,6 @@
 package me.tucu.likes;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.Exceptions.INSUFFICIENT_FUNDS;
-import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.likes.LikesExceptions.ALREADY_LIKES;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.schema.Properties.LIKED_TIME;
@@ -34,7 +33,7 @@ public class CreateLikesTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Likes.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -50,7 +49,7 @@ public class CreateLikesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.likes.create($username, $post_id);",
-                    parameters("username", "laexample", "post_id", 4));
+                    parameters("username", "laexample", "post_id", 8));
 
             // Then I should get what I expect
             Map<String, Object> record = result.single().get("value").asMap();
@@ -131,7 +130,7 @@ public class CreateLikesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.likes.create($username, $post_id);",
-                    parameters("username", "maxdemarzi", "post_id", 4));
+                    parameters("username", "maxdemarzi", "post_id", 8));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(ALREADY_LIKES.value));
@@ -150,7 +149,7 @@ public class CreateLikesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.likes.create($username, $post_id);",
-                    parameters("username", "jexp", "post_id", 6));
+                    parameters("username", "jexp", "post_id", 10));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(INSUFFICIENT_FUNDS.value));
@@ -169,23 +168,12 @@ public class CreateLikesTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.likes.create($username, $post_id);",
-                    parameters("username", "markneedham", "post_id", 6));
+                    parameters("username", "markneedham", "post_id", 10));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(INSUFFICIENT_FUNDS.value));
         }
     }
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK +
-            Nodes.POST1_0401 + Nodes.POST2_0412 + Nodes.POST3_0413 +
-            JEXP_POSTED_POST_1 +
-            LAEG_POSTED_POST_2 +
-            MAX_POSTED_POST_3 +
-            LAEG_REPOSTED_POST_1 +
-            MAX_LIKES_POST_1_SILVER +
-            MAX_LIKES_POST_2_GOLD +
-            JEXP_LIKES_POST_2_SILVER ;
 
     private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
             put("username", "jexp");

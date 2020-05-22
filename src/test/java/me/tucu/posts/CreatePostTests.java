@@ -1,7 +1,7 @@
 package me.tucu.posts;
 
 import me.tucu.Exceptions;
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.Exceptions.INVALID_INPUT;
-import static me.tucu.fixtures.Nodes.*;
-import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.posts.PostExceptions.EMPTY_STATUS;
 import static me.tucu.posts.PostExceptions.MISSING_STATUS;
 import static me.tucu.schema.Properties.TIME;
@@ -36,7 +34,7 @@ public class CreatePostTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Posts.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -457,19 +455,4 @@ public class CreatePostTests {
         put("likes", 0L);
         put("silver", true);
     }};
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
-                    PRODUCT +
-                    POST1_0401 +
-                    POST2_0412 +
-                    POST3_0413 +
-                    JEXP_POSTED_POST_1 +
-                    LAEG_POSTED_POST_2 +
-                    MAX_POSTED_POST_3 +
-                    LAEG_REPOSTED_POST_1 +
-                    MAX_SELLS_PRODUCT +
-                    MAX_LIKES_POST_1_SILVER +
-                    MAX_LIKES_POST_2_GOLD +
-                    JEXP_LIKES_POST_2_SILVER ;
 }

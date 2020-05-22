@@ -1,6 +1,6 @@
 package me.tucu.mentions;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Labels;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,7 +12,6 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
-import static me.tucu.fixtures.Nodes.POST6_0401;
 import static me.tucu.schema.DatedRelationshipTypes.MENTIONED_ON;
 import static me.tucu.schema.Properties.*;
 import static me.tucu.utils.Time.dateFormatter;
@@ -31,7 +30,7 @@ public class CreateMentionsTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Mentions.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -73,9 +72,5 @@ public class CreateMentionsTests {
             }
         }
     }
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP +
-            POST6_0401 ;
 
 }

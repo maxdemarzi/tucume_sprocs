@@ -1,7 +1,7 @@
 package me.tucu.posts;
 
 import me.tucu.Exceptions;
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.tucu.Exceptions.INVALID_INPUT;
-import static me.tucu.fixtures.Nodes.*;
-import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.posts.PostExceptions.*;
 import static me.tucu.schema.Properties.TIME;
 import static me.tucu.users.UserExceptions.*;
@@ -35,7 +33,7 @@ public class CreateReplyTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Posts.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -51,7 +49,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", INPUT));
+                    parameters("post_id", 8, "parameters", INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -73,7 +71,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", WITH_A_TAG_INPUT));
+                    parameters("post_id", 8, "parameters", WITH_A_TAG_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -95,7 +93,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", WITH_A_MENTION_INPUT));
+                    parameters("post_id", 8, "parameters", WITH_A_MENTION_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -117,7 +115,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", WITH_A_PROMOTES_INPUT));
+                    parameters("post_id", 8, "parameters", WITH_A_PROMOTES_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -235,7 +233,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", USER_IS_BROKE_INPUT));
+                    parameters("post_id", 8, "parameters", USER_IS_BROKE_INPUT));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(Exceptions.INSUFFICIENT_FUNDS.value));
@@ -254,7 +252,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", USER_OWES_GOLD_INPUT));
+                    parameters("post_id", 8, "parameters", USER_OWES_GOLD_INPUT));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(Exceptions.INSUFFICIENT_FUNDS.value));
@@ -368,7 +366,7 @@ public class CreateReplyTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.reply($post_id, $parameters);",
-                    parameters("post_id", 6, "parameters", WITH_SILVER_INPUT));
+                    parameters("post_id", 8, "parameters", WITH_SILVER_INPUT));
 
             // Then I should get what I expect
             Map<String, Object> actual = result.single().get("value").asMap();
@@ -495,19 +493,4 @@ public class CreateReplyTests {
         put("likes", 0L);
         put("silver", true);
     }};
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
-                    PRODUCT +
-                    POST1_0401 +
-                    POST2_0412 +
-                    POST3_0413 +
-                    JEXP_POSTED_POST_1 +
-                    LAEG_POSTED_POST_2 +
-                    MAX_POSTED_POST_3 +
-                    LAEG_REPOSTED_POST_1 +
-                    MAX_LIKES_POST_1_SILVER +
-                    MAX_LIKES_POST_2_GOLD +
-                    JEXP_LIKES_POST_2_SILVER +
-                    MAX_SELLS_PRODUCT;
 }

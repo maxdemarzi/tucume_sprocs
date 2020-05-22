@@ -1,6 +1,6 @@
 package me.tucu.posts;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import org.neo4j.harness.Neo4jBuilders;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Nodes.*;
-import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.posts.PostExceptions.POST_NOT_FOUND;
 import static me.tucu.posts.PostExceptions.PRODUCT_NOT_PURCHASED;
 import static me.tucu.schema.Properties.TIME;
@@ -32,7 +30,7 @@ public class CreateRepostTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Posts.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -48,14 +46,14 @@ public class CreateRepostTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
-                    parameters("username", "laexample", "post_id", 5));
+                    parameters("username", "maxdemarzi", "post_id", 12));
 
             // Then I should get what I expect
             Map<String, Object> record = result.single().get("value").asMap();
             HashMap<String, Object> modifiable = new HashMap<>(record);
             modifiable.remove(TIME);
 
-            assertThat(modifiable, is(EXPECTED));
+            assertThat(modifiable, is(EXPECTED_GOLD));
         }
     }
 
@@ -71,7 +69,7 @@ public class CreateRepostTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
-                    parameters("username", "maxdemarzi", "post_id", 9));
+                    parameters("username", "darthvader42", "post_id", 12));
 
             // Then I should get what I expect
             // Then I should get what I expect
@@ -79,7 +77,7 @@ public class CreateRepostTests {
             HashMap<String, Object> modifiable = new HashMap<>(record);
             modifiable.remove(TIME);
 
-            assertThat(modifiable, is(EXPECTED5));
+            assertThat(modifiable, is(EXPECTED));
         }
     }
 
@@ -114,7 +112,7 @@ public class CreateRepostTests {
 
             // When I use the procedure
             Result result = session.run( "CALL me.tucu.posts.repost($post_id, $username);",
-                    parameters("username", "jexp", "post_id", 9));
+                    parameters("username", "rich", "post_id", 12));
 
             // Then I should get what I expect
             assertThat(result.single().get("value").asMap(), equalTo(PRODUCT_NOT_PURCHASED.value));
@@ -159,37 +157,21 @@ public class CreateRepostTests {
         }
     }
 
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
-                    POST1_0401 +
-                    POST2_0412 +
-                    POST3_0413 +
-                    PRODUCT +
-                    MAX_SELLS_PRODUCT +
-                    POST5_0502 +
-                    POST_5_PROMOTES_PRODUCT +
-                    JEXP_POSTED_POST_1 +
-                    LAEG_POSTED_POST_2 +
-                    MAX_POSTED_POST_3 +
-                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100'), silver:true}]->(post3)" +
-                    JEXP_LIKES_POST_2_SILVER +
-                    "CREATE (laeg)-[:POSTED_ON_2020_05_02 {time: datetime('2020-05-02T04:33:52.000+0100') }]->(post5)" ;
-
     private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
-        put("username", "jexp");
-        put("name", "Michael Hunger");
+        put("username", "maxdemarzi");
+        put("name", "Max De Marzi");
         put("hash", "0bd90aeb51d5982062f4f303a62df935");
-        put("status", "Hello World!");
+        put("status", "Please buy $mystuff");
         put("likes", 0L);
         put("silver", true);
-        put("reposts", 1L);
+        put("reposts", 2L);
         put("liked", false);
         put("reposted", true);
     }};
 
-    private static final HashMap<String, Object> EXPECTED5 = new HashMap<>() {{
-        put("username", "laexample");
-        put("name", "Luke Gannon");
+    private static final HashMap<String, Object> EXPECTED_GOLD = new HashMap<>() {{
+        put("username", "maxdemarzi");
+        put("name", "Max De Marzi");
         put("hash", "0bd90aeb51d5982062f4f303a62df935");
         put("status", "Please buy $mystuff");
         put("likes", 0L);

@@ -91,7 +91,7 @@ public class Nodes {
            "CREATE (post2:Post {status:'How are you!', " +
                    "time: datetime('2020-04-12T11:50:35.000+0100')})";
 
-    public static final String POST3_0413 =
+    public static final String POST3_0413 = // Node 10
            "CREATE (post3:Post {status:'Cannot like me!', " +
                    "time: datetime('2020-04-13T09:21:42.123+0100')})" ;
 

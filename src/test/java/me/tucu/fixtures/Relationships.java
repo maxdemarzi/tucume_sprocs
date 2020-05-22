@@ -69,4 +69,7 @@ public class Relationships {
 
     public static final String POST_5_PROMOTES_PRODUCT =
             "CREATE (post5)-[:PROMOTES]->(product)";
+
+    public static final String STEFAN_PURCHASED_PRODUCT =
+            "CREATE (stefan)-[:PURCHASED {time: datetime(), price:1000 }]->(product)";
 }

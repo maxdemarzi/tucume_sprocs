@@ -1,7 +1,6 @@
 package me.tucu.follows;
 
 import me.tucu.fixtures.Graph;
-import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_JEXP;
-import static me.tucu.fixtures.Relationships.MAX_FOLLOWED_BY_LAEG;
 import static me.tucu.follows.FollowExceptions.NOT_FOLLOWING;
 import static me.tucu.follows.FollowExceptions.SELF_UNFOLLOW;
 import static me.tucu.schema.Properties.TIME;
@@ -135,7 +132,7 @@ public class RemoveFollowsTests {
             assertThat(result.single().get("value").asMap(), equalTo(SELF_UNFOLLOW.value));
         }
     }
-    
+
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
             put("username", "laexample");

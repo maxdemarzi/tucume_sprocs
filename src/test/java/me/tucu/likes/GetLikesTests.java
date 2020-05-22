@@ -1,7 +1,6 @@
 package me.tucu.likes;
 
-import me.tucu.fixtures.Nodes;
-import me.tucu.fixtures.Relationships;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.schema.Properties.LIKED_TIME;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -34,7 +32,7 @@ public class GetLikesTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Likes.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -194,16 +192,6 @@ public class GetLikesTests {
             assertThat(result.single().get("value").asMap(), equalTo(UserExceptions.USER_NOT_FOUND.value));
         }
     }
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK +
-            Nodes.POST1_0401 + Nodes.POST2_0412 + Nodes.POST3_0413 +
-            JEXP_POSTED_POST_1 +
-            LAEG_POSTED_POST_2+
-            LAEG_REPOSTED_POST_1 +
-            Relationships.MAX_LIKES_POST_1_SILVER +
-            Relationships.MAX_LIKES_POST_2_GOLD +
-            JEXP_LIKES_POST_2_SILVER ;
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
