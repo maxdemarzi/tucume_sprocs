@@ -58,11 +58,17 @@ public class Relationships {
     public static final String MAX_POSTED_POST_5 =
             "CREATE (max)-[:POSTED_ON_2020_05_02 {time: datetime('2020-05-02T04:33:52.000+0100') }]->(post5)";
 
+    public static final String MAX_POSTED_POST_7 =
+            "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post7)" ;
+
     public static final String LAEG_REPOSTED_POST_1 =
             "CREATE (laeg)-[:REPOSTED_ON_2020_04_12 {time: datetime('2020-04-12T12:33:00.556+0100')}]->(post1)";
 
     public static final String JEXP_LIKES_POST_2_SILVER =
             "CREATE (jexp)-[:LIKES {time: datetime(), silver:true }]->(post2)";
+
+    public static final String LAEG_LIKES_POST_7_SILVER =
+            "CREATE (LAEG)-[:LIKES {time: datetime() - duration('P7D'), silver:true }]->(post7)";
 
     public static final String MAX_SELLS_PRODUCT =
             "CREATE (max)-[:SELLS]->(product)";
@@ -72,4 +78,13 @@ public class Relationships {
 
     public static final String STEFAN_PURCHASED_PRODUCT =
             "CREATE (stefan)-[:PURCHASED {time: datetime(), price:1000 }]->(product)";
+
+    public static final String POST_2_TAGGED_NEO4j =
+            "CREATE (post2)-[:TAGGED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(neo4j)";
+
+    public static final String POST_3_TAGGED_GRAPHS =
+            "CREATE (post3)-[:TAGGED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(graphs)";
+
+    public static final String POST_7_TAGGED_NEO4j =
+            "CREATE (post7)-[:TAGGED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(neo4j)";
 }

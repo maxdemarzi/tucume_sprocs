@@ -198,7 +198,7 @@ public class GetLikesTests {
             put("username", "laexample");
             put("name", "Luke Gannon");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "How are you!");
+            put("status", "How are you! #neo4j #neo4j");
             put("likes", 2L);
             put("reposts", 0L);
         }});

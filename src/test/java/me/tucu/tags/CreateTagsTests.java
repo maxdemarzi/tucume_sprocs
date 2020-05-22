@@ -1,5 +1,6 @@
 package me.tucu.tags;
 
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Labels;
 import me.tucu.schema.Properties;
 import me.tucu.schema.Schema;
@@ -12,10 +13,11 @@ import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static me.tucu.schema.Properties.STATUS;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CreateTagsTests {
@@ -29,7 +31,7 @@ public class CreateTagsTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Tags.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -55,17 +57,15 @@ public class CreateTagsTests {
         }
 
         // Then I should get what I expect
+        ArrayList<String> tags = new ArrayList<>();
         try(Transaction tx = neo4j.defaultDatabaseService().beginTx()) {
             ResourceIterator<Node> iter = tx.findNodes(Labels.Tag);
             while (iter.hasNext()) {
                 Node tag = iter.next();
-                assertThat(tag.getProperty(Properties.NAME), is("neo4j"));
+                tags.add((String)tag.getProperty(Properties.NAME));
             }
         }
-
+        assertThat(tags, hasItem("neo4j"));
     }
-
-    private static final String FIXTURE =
-                    "CREATE (post1:Post {status:'Hello World! #neo4j #neo4j', time: datetime()})" ;
 
 }

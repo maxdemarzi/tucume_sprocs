@@ -141,7 +141,7 @@ public class GetProfileTests {
     private static final HashMap<String, Object> EXPECTED = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("name", "Max De Marzi");
-        put("posts", 5L);
+        put("posts", 6L);
         put("likes", 2L);
         put("followers", 2L);
         put("following", 4L);
@@ -151,7 +151,7 @@ public class GetProfileTests {
     private static final HashMap<String, Object> EXPECTED2 = new HashMap<>() {{
         put("username", "maxdemarzi");
         put("name", "Max De Marzi");
-        put("posts", 5L);
+        put("posts", 6L);
         put("likes", 2L);
         put("followers", 2L);
         put("following", 4L);

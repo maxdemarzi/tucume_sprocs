@@ -137,6 +137,15 @@ public class GetFollowingTests {
 
     private static final ArrayList<Map<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
+            put("username", "markneedham");
+            put("name", "Mark Needham");
+            put("hash", "0bd90aeb51d5982062f4f303a62df935");
+            put("followers", 2L);
+            put("following", 0L);
+            put("posts", 0L);
+            put("likes", 0L);
+        }});
+        add(new HashMap<>() {{
             put("username", "darthvader42");
             put("name", "Stefan Armbruster");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
@@ -152,15 +161,6 @@ public class GetFollowingTests {
             put("followers", 1L);
             put("following", 1L);
             put("posts", 3L);
-            put("likes", 0L);
-        }});
-        add(new HashMap<>() {{
-            put("username", "markneedham");
-            put("name", "Mark Needham");
-            put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("followers", 2L);
-            put("following", 0L);
-            put("posts", 0L);
             put("likes", 0L);
         }});
         add(new HashMap<>() {{

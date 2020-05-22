@@ -88,11 +88,11 @@ public class Nodes {
                    "time: datetime('2020-04-01T12:44:08.556+0100')})" ;
 
     public static final String POST2_0412 =
-           "CREATE (post2:Post {status:'How are you!', " +
+           "CREATE (post2:Post {status:'How are you! #neo4j #neo4j', " +
                    "time: datetime('2020-04-12T11:50:35.000+0100')})";
 
     public static final String POST3_0413 = // Node 10
-           "CREATE (post3:Post {status:'Cannot like me!', " +
+           "CREATE (post3:Post {status:'Cannot like me! But like #graphs', " +
                    "time: datetime('2020-04-13T09:21:42.123+0100')})" ;
 
     public static final String POST4_0413 =
@@ -107,6 +107,10 @@ public class Nodes {
             "CREATE (post6:Post {status:'Hello @jexp', " +
                     "time: datetime('2020-04-01T12:44:08.556+0100')})";
 
+    public static final String POST7_0401 =
+            "CREATE (post7:Post {status:'I like #neo4j but I am biased.', " +
+            "time: datetime('2020-04-01T12:44:08.556+0100')})";
+
     public static final String PRODUCT =
             "CREATE (product:Product {id: 'mystuff', name:'My Stuff', price: 1000, " +
                     "time: datetime('2020-04-23T01:38:22.000+0100')} )";
@@ -118,5 +122,13 @@ public class Nodes {
     public static final String HELLO_TAG =
             "CREATE (tag:Tag {name:'hello', " +
                     "time: datetime('2020-04-01T00:01:00.000+0100') })";
+
+    public static final String NEO4J_TAG =
+            "CREATE (neo4j:Tag {name:'neo4j', " +
+                    "time: datetime('2020-04-01T11:44:08.556+0100')})";
+
+    public static final String GRAPHS_TAG =
+            "CREATE (graphs:Tag {name:'graphs', " +
+                    "time: datetime('2020-04-13T04:20:12.000+0100')})";
 
 }

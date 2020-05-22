@@ -1,6 +1,6 @@
 package me.tucu.tags;
 
-import me.tucu.fixtures.Nodes;
+import me.tucu.fixtures.Graph;
 import me.tucu.schema.Schema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Nodes.POST4_0413;
-import static me.tucu.fixtures.Relationships.JERK_POSTED_POST_4;
-import static me.tucu.fixtures.Relationships.MAX_POSTED_POST_3;
 import static me.tucu.schema.Properties.TIME;
 import static me.tucu.tags.TagExceptions.TAG_NOT_FOUND;
 import static me.tucu.users.UserExceptions.USER_NOT_FOUND;
@@ -35,7 +32,7 @@ public class GetTagsTests {
                 .withDisabledServer()
                 .withProcedure(Schema.class)
                 .withProcedure(Tags.class)
-                .withFixture(FIXTURE)
+                .withFixture(Graph.getGraph())
                 .build();
     }
 
@@ -106,7 +103,7 @@ public class GetTagsTests {
             // When I use the procedure
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
             Result result = session.run( "CALL me.tucu.tags.get($hashtag, $limit, $since);",
-                    parameters("hashtag", "neo4j", "limit", 25, "since", 1586111067));
+                    parameters("hashtag", "neo4j", "limit", 25, "since", ZonedDateTime.parse("2020-04-05T00:01+01:00").toEpochSecond()));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
@@ -135,7 +132,7 @@ public class GetTagsTests {
             //1586111067 is Sunday, April 5, 2020 6:24:27 PM
             Result result = session.run( "CALL me.tucu.tags.get($hashtag, $limit, $since, $username);",
                     parameters("hashtag", "neo4j", "limit", 25,
-                            "since", 1586111067, "username", "maxdemarzi"));
+                            "since", ZonedDateTime.parse("2020-04-05T00:01+01:00").toEpochSecond(), "username", "maxdemarzi"));
 
             // Then I should get what I expect
             ArrayList<Map<String, Object>> actual = new ArrayList<>();
@@ -218,37 +215,13 @@ public class GetTagsTests {
         }
     }
 
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK +
-                    "CREATE (post1:Post {status:'I like #neo4j but I am biased.', " +
-                    "time: datetime('2020-04-01T12:44:08.556+0100')})" +
-                    "CREATE (post2:Post {status:'#neo4j is the label that pays me', " +
-                    "time: datetime('2020-04-12T11:50:35.556+0100')})" +
-                    "CREATE (post3:Post {status:'I dream in #graphs', " +
-                    "time: datetime('2020-04-13T04:20:12.000+0100')})" +
-                    POST4_0413 +
-                    "CREATE (neo4j:Tag {name:'neo4j', " +
-                    "time: datetime('2020-04-01T11:44:08.556+0100')})" +
-                    "CREATE (graphs:Tag {name:'graphs', " +
-                    "time: datetime('2020-04-13T04:20:12.000+0100')})" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post1)" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(post2)" +
-                    MAX_POSTED_POST_3 +
-                    JERK_POSTED_POST_4 +
-                    "CREATE (post1)-[:TAGGED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(neo4j)" +
-                    "CREATE (post2)-[:TAGGED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(neo4j)" +
-                    "CREATE (post3)-[:TAGGED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(graphs)" +
-                    "CREATE (post4)-[:TAGGED_ON_2020_04_14 {time: datetime('2020-04-14T09:53:23.000+0100') }]->(graphs)" +
-                    "CREATE (max)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" +
-                    "CREATE (max)-[:LIKES]->(post1)";
-
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{
-            put("username", "maxdemarzi");
-            put("name", "Max De Marzi");
+            put("username", "laexample");
+            put("name", "Luke Gannon");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "#neo4j is the label that pays me");
-            put("likes", 0L);
+            put("status", "How are you! #neo4j #neo4j");
+            put("likes", 2L);
             put("reposts", 0L);
         }});
         add(new HashMap<>() {{
@@ -269,7 +242,7 @@ public class GetTagsTests {
             put("status", "I like #neo4j but I am biased.");
             put("likes", 1L);
             put("reposts", 0L);
-            put("liked", true);
+            put("liked", false);
             put("reposted", false);
         }});
     }};
@@ -279,7 +252,7 @@ public class GetTagsTests {
             put("username", "maxdemarzi");
             put("name", "Max De Marzi");
             put("hash", "0bd90aeb51d5982062f4f303a62df935");
-            put("status", "I dream in #graphs");
+            put("status", "Cannot like me! But like #graphs");
             put("likes", 0L);
             put("reposts", 0L);
             put("liked", false);

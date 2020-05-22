@@ -164,12 +164,22 @@ public class Users {
             muted.add(r1.getEndNode());
         }
 
-        // Hide posts of muted users by the people I follow
+        // Find the people I follow
         for (Relationship r1 : user.getRelationships(Direction.OUTGOING, RelationshipTypes.FOLLOWS)) {
             Node follow = r1.getEndNode();
             followed.add(follow);
+        }
+
+        // Add the muted users of the people I follow
+        for (Node follow : followed) {
             for (Relationship r2 : follow.getRelationships(Direction.OUTGOING, RelationshipTypes.MUTES)) {
-                muted.add(r2.getEndNode());
+                Node theyMuted = r2.getEndNode();
+                // Don't mute myself
+                if (theyMuted.equals(user)) { continue; }
+                // Add to muted as long as I don't directly follow them
+                if(!followed.contains(theyMuted) ) {
+                  muted.add(theyMuted);
+                }
             }
         }
     }
