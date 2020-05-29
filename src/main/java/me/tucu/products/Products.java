@@ -42,6 +42,10 @@ public class Products {
         put(4, new ArrayList<>() {{ add(0.14); add(0.029); add(0.022); add(0.009);}});  // Reposter 3, Reposter 2, Reposter 1, Author
     }};
 
+    // todo: Create Product
+    // todo: Delete Product
+    // todo: Modify a Product
+
     @Procedure(name = "me.tucu.products.purchase", mode = Mode.WRITE)
     @Description("CALL me.tucu.products.purchase(username, limit, since, username2)")
     public Stream<MapResult> purchaseProduct(@Name(value = "username", defaultValue = "") String username,

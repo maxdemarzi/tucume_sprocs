@@ -431,7 +431,7 @@ public class CreateUserTests {
         put("name", "Max De Marzi");
         put("password", "swordfish");
         put("hash", "3843e8863d8f988fb82b106262ce1587");
-        put("silver", 299L);
+        put("silver", 99L);
         put("gold", 0L);
     }};
 }

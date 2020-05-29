@@ -1,7 +1,6 @@
 package me.tucu.search;
 
 import me.tucu.fixtures.Graph;
-import me.tucu.fixtures.Nodes;
 import me.tucu.schema.Schema;
 import me.tucu.users.UserExceptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,9 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.tucu.fixtures.Nodes.POST4_0413;
-import static me.tucu.fixtures.Nodes.POST6_0401;
-import static me.tucu.fixtures.Relationships.*;
 import static me.tucu.schema.Properties.TIME;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -278,30 +274,6 @@ public class GetSearchTests {
     }
 
     private static final String INDEX = "CALL db.index.fulltext.createNodeIndex('fulltext', ['Post','User','Product'], ['status','username','name'])";
-
-    private static final String FIXTURE =
-            Nodes.MAX + Nodes.JEXP + Nodes.LAEG + Nodes.MARK + Nodes.JERK + Nodes.HELLO_USER +
-                    POST6_0401 +
-                    "CREATE (post2:Post {status:'Hello world', " +
-                    "time: datetime('2020-04-12T11:50:35.556+0100')})" +
-                    "CREATE (post3:Post {status:'Lowercase #hello', " +
-                    "time: datetime('2020-04-13T04:20:12.000+0100')})" +
-                    POST4_0413 +
-                    "CREATE (tag:Tag {name:'hello', " +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (product:Product {id:'product1', name:'hello', " +
-                    "time: datetime('2020-04-01T00:01:00.000+0100') })" +
-                    "CREATE (max)-[:POSTED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(post6)" +
-                    LAEG_POSTED_POST_2 +
-                    MAX_POSTED_POST_3 +
-                    JERK_POSTED_POST_4 +
-                    "CREATE (post6)-[:MENTIONED_ON_2020_04_01 {time: datetime('2020-04-01T12:44:08.556+0100') }]->(jexp)" +
-                    "CREATE (post2)-[:MENTIONED_ON_2020_04_12 {time: datetime('2020-04-12T11:50:35.556+0100') }]->(jexp)" +
-                    "CREATE (post3)-[:MENTIONED_ON_2020_04_13 {time: datetime('2020-04-13T04:20:12.000+0100') }]->(jexp)" +
-                    "CREATE (laeg)-[:REPOSTED_ON_2020_04_13 {time: datetime('2020-04-13T09:15:33.000+0100')}]->(post6)" +
-                    "CREATE (max)-[:LIKES {time: datetime('2020-04-12T11:55:00.000+0100') }]->(post2)" +
-                    "CREATE (jexp)-[:FOLLOWS {time: datetime('2020-03-01T12:44:08.556+0100') }]->(max)" +
-                    "CREATE (max)-[:MUTES {time: datetime('2020-03-01T12:44:08.556+0100') }]->(jerk)" ;
 
     private static final ArrayList<HashMap<String, Object>> EXPECTED = new ArrayList<>() {{
         add(new HashMap<>() {{

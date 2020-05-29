@@ -122,11 +122,11 @@ public class Users {
                     user.setProperty(USERNAME, parameters.get(USERNAME));
                     user.setProperty(PASSWORD, parameters.get(PASSWORD));
                     user.setProperty(HASH, new Md5Hash(((String)parameters.get(EMAIL)).toLowerCase()).toString());
-                    user.setProperty(SILVER, 299L);
+                    user.setProperty(SILVER, 99L);
                     user.setProperty(GOLD,0L);
 
                     LocalDateTime dateTime = LocalDateTime.now(utc);
-                    user.setProperty(TIME, dateTime.truncatedTo(ChronoUnit.DAYS).toEpochSecond(ZoneOffset.UTC));
+                    user.setProperty(TIME, dateTime);
 
                     results = user.getAllProperties();
                 } else {
@@ -139,6 +139,9 @@ public class Users {
         }
         return Stream.of(new MapResult(results));
     }
+
+    // todo: Modify user
+    // todo: Delete user
 
     public static Map<String, Object> getUserAttributes(Node user) {
         Map<String, Object> results;
